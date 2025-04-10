@@ -1,4 +1,5 @@
 #include "Utilities.hpp"
+#include <memory>
 Utility::Utility() {
   this->setMapCArithmetic();
   cout << "Constructor: " << &this->mapCArithmetic << endl;
@@ -29,3 +30,31 @@ void Utility::setMapCArithmetic() {
 const map<string, COMMAND_TYPE> &Utility::getMapCArithmetic() {
   return this->mapCArithmetic;
 }
+const vector<string> &Utility::getSplitCurrentCommand() {
+  return this->splittCurrentCommand;
+}
+void Utility::setSplitCurrentCommand(string currentCommand) {
+  stringstream currentCommandStream = stringstream(currentCommand);
+  string word;
+  while (currentCommandStream >> word) {
+    this->splittCurrentCommand.push_back(word);
+  }
+}
+void Utility::resetSplitCurrentCommand() {
+  for (auto &e : this->splittCurrentCommand) {
+    e = "";
+  }
+}
+// const vector<string> &Utility::splitCurrentCommand(string currentCommand) {
+//
+//   std::unique_ptr<vector<string>> ptrVector;
+//   // vector<string> splittedCurrentCommand;
+//   stringstream currentCommandStream = stringstream(currentCommand);
+//   string word;
+//   while (currentCommandStream >> word) {
+//     // splittedCurrentCommand.push_back(word);
+//     ptrVector->push_back(word);
+//   }
+//   // return splittedCurrentCommand;
+//   return ptrVector;
+// }
