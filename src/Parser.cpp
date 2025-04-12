@@ -13,23 +13,27 @@ Parser::Parser() {
 Parser::~Parser() { cout << "Removing parser" << endl; }
 
 void Parser::operateCommand(string currentCommand) {
-  Utility u = Utility();
-  u.setSplitCurrentCommand(currentCommand);
-  this->setCommandType(
-      u.getMapCArithmetic().at(u.getSplitCurrentCommand().at(0)));
+  // Utility u = Utility();
+  Utility::setSplitCurrentCommand(currentCommand);
+  cout << Utility::getMapCArithmetic().at("add") << endl;
+  // this->setCommandType(
+  //     Utility::getMapCArithmetic().at(Utility::getSplitCurrentCommand().at(0)));
+  this->setCommandType(C_ARITHMETIC);
   // cout << this->getCommandType() << endl;
-
   if (this->commandType == C_ARITHMETIC) {
-    this->setArg1(u.getSplitCurrentCommand().at(0));
+    this->setArg1(Utility::getSplitCurrentCommand().at(0));
     return;
   }
   if (this->getCommandType() != C_RETURN) {
-    this->setArg1(u.getSplitCurrentCommand().at(1));
+    // this->setArg1(u.getSplitCurrentCommand().at(1));
+    this->setArg1(Utility::getSplitCurrentCommand().at(1));
     if (this->getCommandType() == C_PUSH || this->getCommandType() == C_POP ||
         this->getCommandType() == C_FUNCTION ||
         this->getCommandType() == C_CALL)
-      this->setArg2(stoi(u.getSplitCurrentCommand().at(2)));
+      // this->setArg2(stoi(u.getSplitCurrentCommand().at(2)));
+      this->setArg2(stoi(Utility::getSplitCurrentCommand().at(2)));
   }
+  Utility::resetSplitCurrentCommand();
 }
 void Parser::setArg1(string arg1) { this->arg1 = arg1; }
 void Parser::setArg2(int arg2) { this->arg2 = arg2; }

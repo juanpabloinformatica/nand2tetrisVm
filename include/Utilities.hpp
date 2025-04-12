@@ -1,5 +1,6 @@
 #ifndef __UTILITIES__
 #define __UTILITIES__
+#include <filesystem>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -24,19 +25,23 @@ enum COMMAND_TYPE {
   C_RETURN = 8,
   C_CALL = 9
 };
+// i think is better do all of this static honestly
 class Utility {
 private:
-  map<string, COMMAND_TYPE> mapCArithmetic;
-  vector<string> splittCurrentCommand;
+  static map<string, COMMAND_TYPE> mapCArithmetic;
+  static vector<string> splittCurrentCommand;
 
 public:
-  Utility();
-  ~Utility();
-  void setMapCArithmetic();
+  // Utility();
+  // ~Utility();
+  static void setMapCArithmetic();
   // const vector<string> &splitCurrentCommand(string currentCommand);
-  void setSplitCurrentCommand(string currentCommand);
-  void resetSplitCurrentCommand();
-  const vector<string> &getSplitCurrentCommand();
-  const map<string, COMMAND_TYPE> &getMapCArithmetic();
+  static void setSplitCurrentCommand(string currentCommand);
+  static void resetSplitCurrentCommand();
+  static const vector<string> &getSplitCurrentCommand();
+  static const map<string, COMMAND_TYPE> &getMapCArithmetic();
+  static string getFilepath(string file);
 };
+// a lot of wasted memory
+
 #endif
