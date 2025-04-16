@@ -38,6 +38,8 @@ void Utility::setSplitCurrentCommand(string currentCommand) {
     splittCurrentCommand[i++] = word;
   }
 }
+
+// in this version this not will be needed
 void Utility::resetSplitCurrentCommand() {
   // for (auto &e : splittCurrentCommand) {
   //   e = "";

@@ -12,9 +12,9 @@ private:
 
 public:
   CodeWritter();
-  void setFileName(string fileName);
   void writeArithmetic(string command);
   void writePushPop(COMMAND_TYPE commandType, string segment, int index);
+  void setWriteFile(string fileName);
   // closing the output file
   // void close
   ~CodeWritter();

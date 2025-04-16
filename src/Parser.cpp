@@ -5,32 +5,28 @@
 #include <sstream>
 #include <string>
 #include <vector>
-Parser::Parser() {
+Parser::Parser(string filepath) {
   this->arg1 = "NONE";
   this->arg2 = -1;
   this->commandType = C_UNDEFINED;
+  this->readFile = ifstream(filepath);
 }
 Parser::~Parser() { cout << "Removing parser" << endl; }
 
 void Parser::operateCommand(string currentCommand) {
-  // Utility u = Utility();
   Utility::setSplitCurrentCommand(currentCommand);
   this->setCommandType(
       Utility::getMapCArithmetic().at(Utility::getSplitCurrentCommand()[0]));
-  // this->setCommandType(C_ARITHMETIC);
-  //  cout << this->getCommandType() << endl;
   if (this->commandType == C_ARITHMETIC) {
     this->setArg1(Utility::getSplitCurrentCommand()[0]);
     Utility::resetSplitCurrentCommand();
     return;
   }
   if (this->getCommandType() != C_RETURN) {
-    // this->setArg1(u.getSplitCurrentCommand().at(1));
     this->setArg1(Utility::getSplitCurrentCommand()[1]);
     if (this->getCommandType() == C_PUSH || this->getCommandType() == C_POP ||
         this->getCommandType() == C_FUNCTION ||
         this->getCommandType() == C_CALL)
-      // this->setArg2(stoi(u.getSplitCurrentCommand().at(2)));
       this->setArg2(stoi(Utility::getSplitCurrentCommand()[2]));
   }
   Utility::resetSplitCurrentCommand();

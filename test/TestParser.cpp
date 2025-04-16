@@ -1,6 +1,13 @@
 #include "TestParser.hpp"
-void testParser() {
-  Parser p = Parser();
+#include <string>
+void testParser(std::string filename) {
+  Utility u = Utility();
+  Parser p = Parser(u.getFilepath(filename));
+  Control c = Control(u.getFilepath(filename));
+  string text;
+  // while (std::getline(c.getReadFile(), text)) {
+  //   cout <<"hello";
+  // }
   p.operateCommand("add");
   assert(p.getCommandType() == C_ARITHMETIC);
   assert(p.getArg1() == "add");

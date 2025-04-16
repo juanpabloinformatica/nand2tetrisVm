@@ -38,10 +38,10 @@ public:
   static void setMapCArithmetic();
   // const vector<string> &splitCurrentCommand(string currentCommand);
   static void setSplitCurrentCommand(string currentCommand);
-  static void resetSplitCurrentCommand();
   static const array<string, ARRAY_LENGTH> &getSplitCurrentCommand();
   static const map<string, COMMAND_TYPE> &getMapCArithmetic();
   static string getFilepath(string file);
+  static void resetSplitCurrentCommand();
 };
 // a lot of wasted memory
 
