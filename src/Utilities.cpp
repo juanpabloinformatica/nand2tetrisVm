@@ -1,7 +1,7 @@
 #include "Utilities.hpp"
 map<string, COMMAND_TYPE> Utility::mapCArithmetic;
 
-vector<string> Utility::splittCurrentCommand;
+array<string, ARRAY_LENGTH> Utility::splittCurrentCommand;
 
 void Utility::setMapCArithmetic() {
   mapCArithmetic["sub"] = C_ARITHMETIC;
@@ -27,20 +27,24 @@ void Utility::setMapCArithmetic() {
 const map<string, COMMAND_TYPE> &Utility::getMapCArithmetic() {
   return mapCArithmetic;
 }
-const vector<string> &Utility::getSplitCurrentCommand() {
+const array<string, ARRAY_LENGTH> &Utility::getSplitCurrentCommand() {
   return splittCurrentCommand;
 }
 void Utility::setSplitCurrentCommand(string currentCommand) {
   stringstream currentCommandStream = stringstream(currentCommand);
   string word;
+  int i = 0;
   while (currentCommandStream >> word) {
-    splittCurrentCommand.push_back(word);
+    splittCurrentCommand[i++] = word;
   }
 }
 void Utility::resetSplitCurrentCommand() {
-  for (auto &e : splittCurrentCommand) {
-    e = "";
-  }
+  // for (auto &e : splittCurrentCommand) {
+  //   e = "";
+  // }
+  splittCurrentCommand[0] = "";
+  splittCurrentCommand[1] = "";
+  splittCurrentCommand[2] = "";
 }
 string Utility::getFilepath(string file) {
   std::filesystem::path cwd = std::filesystem::current_path();

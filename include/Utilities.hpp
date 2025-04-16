@@ -1,18 +1,19 @@
 #ifndef __UTILITIES__
 #define __UTILITIES__
+#define ARRAY_LENGTH 3
+#include <array>
 #include <filesystem>
 #include <iostream>
 #include <map>
 #include <memory>
 #include <sstream>
-#include <vector>
+using std::array;
 using std::cout;
 using std::endl;
 using std::map;
 using std::string;
 using std::stringstream;
 using std::unique_ptr;
-using std::vector;
 enum COMMAND_TYPE {
   C_UNDEFINED = -1,
   C_ARITHMETIC = 1,
@@ -29,7 +30,7 @@ enum COMMAND_TYPE {
 class Utility {
 private:
   static map<string, COMMAND_TYPE> mapCArithmetic;
-  static vector<string> splittCurrentCommand;
+  static array<string, ARRAY_LENGTH> splittCurrentCommand;
 
 public:
   // Utility();
@@ -38,7 +39,7 @@ public:
   // const vector<string> &splitCurrentCommand(string currentCommand);
   static void setSplitCurrentCommand(string currentCommand);
   static void resetSplitCurrentCommand();
-  static const vector<string> &getSplitCurrentCommand();
+  static const array<string, ARRAY_LENGTH> &getSplitCurrentCommand();
   static const map<string, COMMAND_TYPE> &getMapCArithmetic();
   static string getFilepath(string file);
 };

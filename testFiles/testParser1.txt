@@ -1,0 +1,16 @@
+add
+sub
+eq
+gt
+eq
+lt
+and
+or
+not
+pop temp 0
+push local 1
+label IF_FALSE0
+goto IF_FALSE0
+function Array.dispose 0
+return
+call Memory.deAlloc 1
