@@ -5,11 +5,10 @@
 #include <sstream>
 #include <string>
 #include <vector>
-Parser::Parser(string filepath) {
+Parser::Parser() {
   this->arg1 = "NONE";
   this->arg2 = -1;
   this->commandType = C_UNDEFINED;
-  this->readFile = ifstream(filepath);
 }
 Parser::~Parser() { cout << "Removing parser" << endl; }
 

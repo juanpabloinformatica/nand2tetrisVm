@@ -1,6 +1,7 @@
 #ifndef __CONTROL__
 #define __CONTROL__
 #include <fstream>
+using std::fstream;
 using std::ifstream;
 using std::ofstream;
 using std::string;
@@ -13,8 +14,8 @@ public:
   Control(string filepath);
   ~Control();
   void setReadFile(string filepath);
-  const ifstream &getReadFile();
+  ifstream &getReadFile();
   void setWriteFile(string filepath);
-  const ofstream &getWriteFile();
+  ofstream &getWriteFile();
 };
 #endif

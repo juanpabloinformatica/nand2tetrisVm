@@ -41,9 +41,6 @@ void Utility::setSplitCurrentCommand(string currentCommand) {
 
 // in this version this not will be needed
 void Utility::resetSplitCurrentCommand() {
-  // for (auto &e : splittCurrentCommand) {
-  //   e = "";
-  // }
   splittCurrentCommand[0] = "";
   splittCurrentCommand[1] = "";
   splittCurrentCommand[2] = "";

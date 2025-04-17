@@ -12,11 +12,10 @@ class Parser {
 private:
   string arg1;
   int arg2;
-  ifstream readFile;
   COMMAND_TYPE commandType;
 
 public:
-  Parser(string filepath);
+  Parser();
   ~Parser();
   void operateCommand(string currentCommand);
   void setCommandType(COMMAND_TYPE commandType);
@@ -26,7 +25,6 @@ public:
   // std::string getCommandType();
   string getArg1();
   int getArg2();
-  const ifstream &getReadFile();
   COMMAND_TYPE &getCommandType();
 };
 #endif

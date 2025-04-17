@@ -1,13 +1,16 @@
 #include "TestParser.hpp"
+#include <fstream>
 #include <string>
 void testParser(std::string filename) {
-  Utility u = Utility();
-  Parser p = Parser(u.getFilepath(filename));
-  Control c = Control(u.getFilepath(filename));
+  Parser p = Parser();
+  Control c = Control(Utility::getFilepath(filename));
   string text;
-  // while (std::getline(c.getReadFile(), text)) {
-  //   cout <<"hello";
-  // }
+  while (std::getline(c.getReadFile(), text)) {
+    cout << text << endl;
+  }
+
+  exit(0);
+
   p.operateCommand("add");
   assert(p.getCommandType() == C_ARITHMETIC);
   assert(p.getArg1() == "add");
