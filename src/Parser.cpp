@@ -45,8 +45,8 @@ void Parser::setMapCommand() {
   this->mapCommand["pop"] = C_POP;
   this->mapCommand["label"] = C_LABEL;
   this->mapCommand["goto"] = C_GOTO;
-  // need to check what this expresion tries to do
-  // this->mapCArithmetic["if-goto"] = C_GOTO;
+   need to check what this expresion tries to do
+   this->mapCArithmetic["if-goto"] = C_GOTO;
   this->mapCommand["if"] = C_IF;
   this->mapCommand["function"] = C_FUNCTION;
   this->mapCommand["return"] = C_RETURN;

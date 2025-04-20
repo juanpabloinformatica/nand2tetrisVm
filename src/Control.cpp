@@ -5,6 +5,23 @@ Control::Control(string filepath) {
   int indexDelimeter = filepath.find(".");
   string writeFilePath = filepath.substr(0, indexDelimeter) + ".hack";
   this->setWriteFile(writeFilePath);
+  this->parser = Parser();
+  // learning about error of having the destructor
+  this->codeWritter = CodeWritter();
+  this->memoryManager = MemoryManager();
+
+  MemoryManager memoryManager;
+}
+void Control::traverseFile() {
+  string currentCommand;
+  while (std::getline(this->readFile, currentCommand)) {
+    this->parser.operateCommand(currentCommand);
+    if(this->parser.getCommandType() == C_ARITHMETIC){
+
+    }else if(){
+
+    }
+  }
 }
 
 void Control::setReadFile(string filepath) {
