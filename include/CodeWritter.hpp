@@ -12,10 +12,13 @@ private:
 
 public:
   CodeWritter();
+  string getPushAssembly(COMMAND_TYPE commandType, string segment, int index);
+  string getPopAssembly(COMMAND_TYPE commandType, string segment, int index);
   // ~CodeWritter();
-  void writeArithmetic(string command);
-  void writePushPop(COMMAND_TYPE commandType, string segment, int index);
-  void setWriteFile(string fileName);
+  // void writeArithmetic(string command);
+  // void writePush(COMMAND_TYPE commandType, string segment, int index);
+  // void writePop(COMMAND_TYPE commandType, string segment, int index);
+  // void setWriteFile(string fileName);
   // closing the output file
   // void close
 };

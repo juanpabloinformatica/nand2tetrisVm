@@ -16,11 +16,33 @@ void Control::traverseFile() {
   string currentCommand;
   while (std::getline(this->readFile, currentCommand)) {
     this->parser.operateCommand(currentCommand);
-    if(this->parser.getCommandType() == C_ARITHMETIC){
-
-    }else if(){
-
+    switch (this->parser.getCommandType()) {
+    case C_ARITHMETIC:
+      break;
+    case C_PUSH:
+      break;
+    case C_POP:
+      break;
+    case C_LABEL:
+      break;
+    case C_GOTO:
+      break;
+    case C_IF:
+      break;
+    case C_FUNCTION:
+      break;
+    case C_RETURN:
+      break;
+    case C_CALL:
+      break;
+    default:
+      break;
     }
+
+    // if (this->parser.getCommandType() == C_ARITHMETIC) {
+    //
+    // } else if (this->parser.getCommandType() == C_PUSH) {
+    // }
   }
 }
 

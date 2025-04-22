@@ -4,7 +4,7 @@
 #include <string>
 using std::string;
 enum COMMAND_TYPE {
-  C_UNDEFINED = -1,
+  // C_UNDEFINED = -1,
   C_ARITHMETIC = 1,
   C_PUSH = 2,
   C_POP = 3,
