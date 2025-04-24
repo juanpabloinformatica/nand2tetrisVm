@@ -43,5 +43,7 @@ public:
   void setPointerMemorySegment(void);
   void setTempMemorySegment(void);
   void setRamMemorySegment(void);
+  void updateStackMemory(int value);
+  int popStack(void);
 };
 #endif

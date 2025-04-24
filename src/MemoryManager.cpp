@@ -38,3 +38,13 @@ void MemoryManager::setRamMemorySegment(void) {
   // this->ramMemory.at(14) = 0;
   // this->ramMemory.at(15) = 0;
 }
+void MemoryManager::updateStackMemory(int value) {
+  this->stackMemory.push(value);
+}
+int MemoryManager::popStack(void) {
+  int result = this->stackMemory.top();
+  this->stackMemory.pop();
+  result += this->stackMemory.top();
+  this->stackMemory.pop();
+  return result;
+}

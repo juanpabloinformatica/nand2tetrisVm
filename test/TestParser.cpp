@@ -5,11 +5,11 @@ void testParser(std::string filename) {
   Parser p = Parser();
   Control c = Control(Utility::getFilepath(filename));
    string text;
-   while (std::getline(c.getReadFile(), text)) {
-     cout << text << endl;
-   }
-  
-   exit(0);
+  //  while (std::getline(c.getReadFile(), text)) {
+  //    cout << text << endl;
+  //  }
+  //
+  //  exit(0);
 
   p.operateCommand("add");
   assert(p.getCommandType() == C_ARITHMETIC);
