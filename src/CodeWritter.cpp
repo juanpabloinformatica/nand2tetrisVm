@@ -10,14 +10,16 @@ string CodeWritter::newPushAssembly(string memorySegment,
                                     int memorySegmentIndex) {
   // i will improve this code
   string pushAssemblyInstance = "";
+  int indexOpenDelimeter = this->pushAssemblyTemplate.find("[");
+  int indexEndDelimeter = this->pushAssemblyTemplate.find("]");
   if (Utility::memorySegmentMap.at(memorySegment) == M_S_CONSTANT) {
-    pushAssemblyInstance = string(this->pushAssemblyTemplate);
-    std::cout << this->pushAssemblyTemplate << std::endl;
+    // pushAssemblyInstance = string(this->pushAssemblyTemplate);
+    // std::cout << this->pushAssemblyTemplate << std::endl;
     // I will organize this code after
-    int indexOpenDelimeter = pushAssemblyInstance.find("[");
-    int indexEndDelimeter = pushAssemblyInstance.find("]");
+    // int indexOpenDelimeter = pushAssemblyInstance.find("[");
+    // int indexEndDelimeter = pushAssemblyInstance.find("]");
     pushAssemblyInstance =
-        pushAssemblyInstance.substr(0, indexOpenDelimeter - 1);
+        this->pushAssemblyTemplate.substr(0, indexOpenDelimeter - 1);
     pushAssemblyInstance += this->pushAssemblyTemplate.substr(
         indexEndDelimeter + 1,
         this->pushAssemblyTemplate.length() - indexEndDelimeter);
@@ -25,9 +27,31 @@ string CodeWritter::newPushAssembly(string memorySegment,
     int indexTemplateVar = pushAssemblyTemplate.find("#");
     pushAssemblyInstance.replace(indexTemplateVar, templateVarLength,
                                  std::to_string(memorySegmentIndex));
-
   } else {
+    pushAssemblyInstance =
+        this->pushAssemblyTemplate.substr(0, indexOpenDelimeter + 1);
+    // std::cout << "First delimeter else" << std::endl;
+    // std::cout << pushAssemblyInstance << std::endl;
+    // i add +2 because I want to skipp delimeter + /n
+    // i add 3 because when i do the difference i need to keep the count of
+    // what I previously added + 1 because I want to remove \n after ] delimeter
+    pushAssemblyInstance += this->pushAssemblyTemplate.substr(
+        indexOpenDelimeter + 2,
+        (indexEndDelimeter - indexOpenDelimeter) - 3); //
 
+    pushAssemblyInstance += this->pushAssemblyTemplate.substr(
+        indexEndDelimeter + 1,
+        this->pushAssemblyTemplate.length() - indexEndDelimeter - 1);
+
+    int templateVarLength = string("##index##").length();
+    int indexTemplateVar = pushAssemblyTemplate.find("#");
+    pushAssemblyInstance.replace(indexTemplateVar, templateVarLength,
+                                 std::to_string(memorySegmentIndex));
+    templateVarLength = string("##m_s##").length();
+    indexTemplateVar = pushAssemblyTemplate.find("#");
+    pushAssemblyInstance.replace(
+        indexTemplateVar, templateVarLength,
+        std::to_string(Utility::memorySegmentMap.at(memorySegment)));
   }
   std::cout << pushAssemblyInstance << std::endl;
   exit(EXIT_SUCCESS);
@@ -54,10 +78,8 @@ string CodeWritter::getArithmeticAssembly(string operation) { return ""; }
 
 void CodeWritter::setPushAssemblyTemplate(void) {
   this->pushAssemblyTemplate =
-      std::string("@##index##") + "\n" + "D=A" + "\n" + "[" +
-      "\n"
-      "@##m_s##" +
-      "\n" + "A=M+D" + "\n" + "D=M" + "\n" +
+      std::string("@##index##") + "\n" + "D=A" + "\n" + "[" + "\n" +
+      "@##m_s##" + "\n" + "A=M+D" + "\n" + "D=M" + "\n" +
       "]"
       "\n" +
       "@0" + "\n" + "A=M" + "\n" + "M=D" + "\n" + "@0" + "\n" + "M=M+1" + "\n";
