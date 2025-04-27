@@ -4,12 +4,10 @@ Control::Control(string filepath) {
   this->setReadFile(filepath);
   int indexDelimeter = filepath.find(".");
   string writeFilePath = filepath.substr(0, indexDelimeter) + ".hack";
-  cout << writeFilePath << endl;
   this->setWriteFile(writeFilePath);
   this->parser = Parser();
-  // learning about error of having the destructor
-  this->codeWritter = CodeWritter();
   this->memoryManager = MemoryManager();
+  this->codeWritter = CodeWritter();
 }
 void Control::traverseFile() {
   string currentCommand;
@@ -22,18 +20,12 @@ void Control::traverseFile() {
       this->parser.operateCommand(currentCommand);
       switch (this->parser.getCommandType()) {
       case C_ARITHMETIC:
-        if (this->parser.getArg1() == "add") {
-          this->memoryManager.updateStackMemory(this->memoryManager.popStack());
-        }
-        this->writeFile << endl;
-        this->parser.resetSplitCurrentCommand();
         break;
       case C_PUSH:
         this->memoryManager.updateStackMemory(this->parser.getArg2());
-        this->writeFile << this->codeWritter.getPushAssembly(
-            C_PUSH, this->parser.getArg1(), this->parser.getArg2());
-        this->writeFile << endl;
-        this->parser.resetSplitCurrentCommand();
+        this->codeWritter.getPushAssembly(this->parser.getArg1(),
+                                          this->parser.getArg2());
+
         break;
       case C_POP:
         break;
@@ -54,21 +46,22 @@ void Control::traverseFile() {
       }
     }
   }
+}
 
-  void Control::setReadFile(string filepath) {
-    if (std::filesystem::exists(filepath)) {
-      this->readFile = ifstream(filepath);
-    } else {
-      cout << "ERROR AT READING FILE" << endl;
-      exit(1);
-    }
+void Control::setReadFile(string filepath) {
+  if (std::filesystem::exists(filepath)) {
+    this->readFile = ifstream(filepath);
+  } else {
+    cout << "ERROR AT READING FILE" << endl;
+    exit(1);
   }
-  void Control::setWriteFile(string filepath) {
-    this->writeFile = ofstream(filepath);
-  }
-  ifstream &Control::getReadFile() { return this->readFile; }
-  ofstream &Control::getWriteFile() { return this->writeFile; }
-  Control::~Control() {
-    this->readFile.close();
-    this->writeFile.close();
-  }
+}
+void Control::setWriteFile(string filepath) {
+  this->writeFile = ofstream(filepath);
+}
+ifstream &Control::getReadFile() { return this->readFile; }
+ofstream &Control::getWriteFile() { return this->writeFile; }
+Control::~Control() {
+  this->readFile.close();
+  this->writeFile.close();
+}

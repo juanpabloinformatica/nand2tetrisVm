@@ -11,6 +11,8 @@ private:
   string pushAssemblyTemplate;
   string popAssemblyTemplate;
   string arithmeticAssemblyTemplate;
+  // i could do this oop but not  now
+  string newPushAssembly(string mememorySegment, int memorySegmentIndex);
 
 public:
   CodeWritter();
@@ -18,9 +20,10 @@ public:
   void setPushAssemblyTemplate(void);
   void setPopAssemblyTemplate(void);
   void setArithmeticAssemblyTemplate(void);
-  string getPushAssembly(COMMAND_TYPE commandType, string segment, int index);
-  string getPopAssembly(COMMAND_TYPE commandType, string segment, int index);
+  string getPushAssembly(string segment, int index);
+  string getPopAssembly(string segment, int index);
   string getArithmeticAssembly(string operation);
+
   // ~CodeWritter();
   // void writeArithmetic(string command);
   // void writePush(COMMAND_TYPE commandType, string segment, int index);
