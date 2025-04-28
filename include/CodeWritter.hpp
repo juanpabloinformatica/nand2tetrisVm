@@ -13,6 +13,8 @@ private:
   string arithmeticAssemblyTemplate;
   // i could do this oop but not  now
   string newPushAssembly(string mememorySegment, int memorySegmentIndex);
+  string newPopAssembly(string mememorySegment, int memorySegmentIndex);
+  string newArithmeticAssembly(string mememorySegment);
 
 public:
   CodeWritter();

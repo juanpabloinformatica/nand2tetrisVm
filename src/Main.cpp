@@ -12,5 +12,6 @@ int main(int argc, char *argv[]) {
   // Control c = Control(filename);
   // c.traverseFile();
   CodeWritter c = CodeWritter();
-  c.getPushAssembly("local", 5);
+  c.getPushAssembly("constant",5);
+  // c.getPopAssembly("local", 5);
 }
