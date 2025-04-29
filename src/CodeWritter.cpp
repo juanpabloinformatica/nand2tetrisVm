@@ -9,71 +9,25 @@ CodeWritter::CodeWritter() {
   this->setPushAssemblyTemplate();
   this->setArithmeticAssemblyTemplate();
 }
-
 string CodeWritter::newPushAssembly(string memorySegment,
                                     int memorySegmentIndex) {
-  // i will improve this code
-  string pushAssemblyInstance = "";
-  int indexOpenDelimeter = this->pushAssemblyTemplate.find("[");
-  int indexEndDelimeter = this->pushAssemblyTemplate.find("]");
-  if (Utility::memorySegmentMap.at(memorySegment) == M_S_CONSTANT) {
-    //+1 for skipping the delimeter
-    pushAssemblyInstance +=
-        this->pushAssemblyTemplate.substr(0, indexOpenDelimeter - 1);
-    pushAssemblyInstance += this->pushAssemblyTemplate.substr(
-        indexEndDelimeter + 1,
-        this->pushAssemblyTemplate.length() - indexEndDelimeter);
-    int templateVarLength = string("##index##").length();
-    int indexTemplateVar = pushAssemblyTemplate.find("#");
-    pushAssemblyInstance.replace(indexTemplateVar, templateVarLength,
-                                 std::to_string(memorySegmentIndex));
-  } else {
-    //+1 for skipping the delimeter
-    pushAssemblyInstance +=
-        this->pushAssemblyTemplate.substr(0, indexOpenDelimeter);
-    // std::cout << "First delimeter else" << std::endl;
-    // std::cout << pushAssemblyInstance << std::endl;
-    // i add +2 because I want to skipp delimeter(]) + /n
-    // the diff between indexEnd and indexOpen
-    // will give the #units or chars between that interval
-    // but as we decalate the start position 2 units it will give 2 extra
-    // chars
-    // -one is also situated to skip \n before delimeter
-    pushAssemblyInstance += this->pushAssemblyTemplate.substr(
-        indexOpenDelimeter + 2,
-        (indexEndDelimeter - indexOpenDelimeter) -
-            3); //
-                // i wil do this with regex instead
 
-    pushAssemblyInstance += this->pushAssemblyTemplate.substr(
-        indexEndDelimeter + 1,
-        this->pushAssemblyTemplate.length() - indexEndDelimeter - 1);
-    int templateVarLength = string("##index##").length();
-    int indexTemplateVar = pushAssemblyTemplate.find("#");
-    pushAssemblyInstance.replace(indexTemplateVar, templateVarLength,
-                                 std::to_string(memorySegmentIndex));
-    templateVarLength = string("##m_s##").length();
-    indexTemplateVar = pushAssemblyInstance.find("#");
-    pushAssemblyInstance.replace(
-        indexTemplateVar, templateVarLength,
-        std::to_string(Utility::memorySegmentMap.at(memorySegment)));
+  string pushAssemblyInstance = std::string(this->pushAssemblyTemplate);
+  if (Utility::memorySegmentMap.at(memorySegment) == M_S_CONSTANT) {
+    cout << "in here" << endl;
+    std::regex regexDelimeter = std::regex("\\[(\\n.*)*\\]\\n");
+    pushAssemblyInstance =
+        std::regex_replace(pushAssemblyInstance, regexDelimeter, "");
+    cout << pushAssemblyInstance << endl;
+  } else {
+    cout << "hello" << endl;
+    std::regex regexDelimeter = std::regex("\\[\\n|\\n\\]\\n");
+    pushAssemblyInstance =
+        std::regex_replace(pushAssemblyInstance, regexDelimeter, "");
+    cout << pushAssemblyInstance << endl;
   }
   return pushAssemblyInstance;
 }
-// string CodeWritter::newPushAssembly(string memorySegment,
-//                                     int memorySegmentIndex) {
-//
-//   string pushAssemblyInstance = std::string(this->pushAssemblyTemplate);
-//   if (Utility::memorySegmentMap.at(memorySegment) == M_S_CONSTANT) {
-//     cout << "in here" << endl;
-//     std::regex regexDelimeter = std::regex("\\[(\\d|\\w|\\n)*\\]");
-//     pushAssemblyInstance =
-//         std::regex_replace(pushAssemblyInstance, regexDelimeter, "");
-//     cout << pushAssemblyInstance << endl;
-//   } else {
-//   }
-//   return pushAssemblyInstance;
-// }
 string CodeWritter::getPushAssembly(string memorySegment,
                                     int memorySegmentIndex) {
   return newPushAssembly(memorySegment, memorySegmentIndex);
