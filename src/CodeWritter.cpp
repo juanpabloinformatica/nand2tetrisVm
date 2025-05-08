@@ -1,8 +1,8 @@
 #include "CodeWritter.hpp"
 #include <regex>
 
-using std::cout;
-using std::endl;
+// using std::cout;
+// using std::endl;
 // void CodeWritter::writeArithmetic(string command) {}
 CodeWritter::CodeWritter() {
   this->setPopAssemblyTemplate();
@@ -14,17 +14,24 @@ string CodeWritter::newPushAssembly(string memorySegment,
 
   string pushAssemblyInstance = std::string(this->pushAssemblyTemplate);
   if (Utility::memorySegmentMap.at(memorySegment) == M_S_CONSTANT) {
-    cout << "in here" << endl;
     std::regex regexDelimeter = std::regex("\\[(\\n.*)*\\]\\n");
     pushAssemblyInstance =
         std::regex_replace(pushAssemblyInstance, regexDelimeter, "");
-    cout << pushAssemblyInstance << endl;
+    std::regex indexRegex = std::regex("\\#\\#index\\#\\#");
+    pushAssemblyInstance = std::regex_replace(
+        pushAssemblyInstance, indexRegex, std::to_string(memorySegmentIndex));
   } else {
-    cout << "hello" << endl;
-    std::regex regexDelimeter = std::regex("\\[\\n|\\n\\]\\n");
+    std::regex regexDelimeter = std::regex("\\[\\n|\\n\\]");
     pushAssemblyInstance =
         std::regex_replace(pushAssemblyInstance, regexDelimeter, "");
-    cout << pushAssemblyInstance << endl;
+    std::regex memorySegmentRegex = std::regex("##m_s##");
+    pushAssemblyInstance = std::regex_replace(
+        pushAssemblyInstance, memorySegmentRegex,
+        std::to_string(Utility::memorySegmentMap.at(memorySegment)));
+    std::regex memorySegmentIndexRegex = std::regex("##index##");
+    pushAssemblyInstance =
+        std::regex_replace(pushAssemblyInstance, memorySegmentIndexRegex,
+                           std::to_string(memorySegmentIndex));
   }
   return pushAssemblyInstance;
 }
@@ -57,7 +64,10 @@ string CodeWritter ::newPopAssembly(string memorySegment,
 string CodeWritter::getPopAssembly(string memorySegmentIndex, int index) {
   return newPopAssembly(memorySegmentIndex, index);
 }
-string CodeWritter::getArithmeticAssembly(string operation) { return ""; }
+string CodeWritter::newArithmeticAssembly() {
+  return std::string(this->arithmeticAssemblyTemplate);
+}
+string CodeWritter::getArithmeticAssembly() { return newArithmeticAssembly(); }
 
 void CodeWritter::setPushAssemblyTemplate(void) {
   this->pushAssemblyTemplate =

@@ -3,7 +3,7 @@
 Control::Control(string filepath) {
   this->setReadFile(filepath);
   int indexDelimeter = filepath.find(".");
-  string writeFilePath = filepath.substr(0, indexDelimeter) + ".hack";
+  string writeFilePath = filepath.substr(0, indexDelimeter) + ".asm";
   this->setWriteFile(writeFilePath);
   this->parser = Parser();
   this->memoryManager = MemoryManager();
@@ -20,12 +20,19 @@ void Control::traverseFile() {
       this->parser.operateCommand(currentCommand);
       switch (this->parser.getCommandType()) {
       case C_ARITHMETIC:
+        // this->getWriteFile() << this->codeWritter.getPushAssembly(
+        //     "constant", this->memoryManager.popStack());
+        this->getWriteFile() << this->codeWritter.getArithmeticAssembly();
+        this->getWriteFile() << endl;
+        this->getWriteFile() << this->codeWritter.getPushAssembly(
+            "constant", this->memoryManager.popStack(this->parser.getArg1()));
+        this->getWriteFile() << endl;
         break;
       case C_PUSH:
         this->memoryManager.updateStackMemory(this->parser.getArg2());
-        this->codeWritter.getPushAssembly(this->parser.getArg1(),
-                                          this->parser.getArg2());
-
+        this->getWriteFile() << this->codeWritter.getPushAssembly(
+            this->parser.getArg1(), this->parser.getArg2());
+        this->getWriteFile() << endl;
         break;
       case C_POP:
         break;

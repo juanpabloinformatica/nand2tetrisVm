@@ -41,10 +41,34 @@ MemoryManager::~MemoryManager() {}
 void MemoryManager::updateStackMemory(int value) {
   this->stackMemory.push(value);
 }
-int MemoryManager::popStack(void) {
+// i need to check the order it means if for example
+// gt is used is checking a > b or b > a??
+int MemoryManager::popStack(string type) {
   int result = this->stackMemory.top();
   this->stackMemory.pop();
-  result += this->stackMemory.top();
+  // unary operations
+  if (type == "not") {
+    return !result;
+  }
+  if (type == "neg") {
+    return result * -1;
+  }
+  // binary operations
+  if (type == "add") {
+    result += this->stackMemory.top();
+  } else if (type == "sub") {
+    result -= this->stackMemory.top();
+  } else if (type == "eq") {
+    result = (result == this->stackMemory.top()) ? 1 : 0;
+  } else if (type == "gt") {
+    result = (result > this->stackMemory.top()) ? 1 : 0;
+  } else if (type == "lt") {
+    result = (result < this->stackMemory.top()) ? 1 : 0;
+  } else if (type == "and") {
+    result &= this->stackMemory.top();
+  } else if (type == "or") {
+    result |= this->stackMemory.top();
+  }
   this->stackMemory.pop();
   return result;
 }

@@ -14,7 +14,7 @@ private:
   // i could do this oop but not  now
   string newPushAssembly(string mememorySegment, int memorySegmentIndex);
   string newPopAssembly(string mememorySegment, int memorySegmentIndex);
-  string newArithmeticAssembly(string mememorySegment);
+  string newArithmeticAssembly();
 
 public:
   CodeWritter();
@@ -24,7 +24,7 @@ public:
   void setArithmeticAssemblyTemplate(void);
   string getPushAssembly(string segment, int index);
   string getPopAssembly(string segment, int index);
-  string getArithmeticAssembly(string operation);
+  string getArithmeticAssembly();
 
   // ~CodeWritter();
   // void writeArithmetic(string command);

@@ -2,6 +2,7 @@
 #define __MEMORY_MANAGER__
 #include <array>
 #include <stack>
+#include <string>
 #include <vector>
 #define CONSTANT_MEMORY_LENGTH 32768
 #define POINTER_MEMORY_LENGTH 2
@@ -9,6 +10,7 @@
 #define RAM_MEMORY_LENGTH 24575
 using std::array;
 using std::stack;
+using std::string;
 using std::vector;
 class MemoryManager {
 private:
@@ -44,6 +46,6 @@ public:
   // void setTempMemorySegment(void);
   // void setRamMemorySegment(void);
   void updateStackMemory(int value);
-  int popStack(void);
+  int popStack(string type);
 };
 #endif
