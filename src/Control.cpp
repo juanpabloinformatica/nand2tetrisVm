@@ -3,14 +3,21 @@
 Control::Control(string filepath) {
   this->setReadFile(filepath);
   int indexDelimeter = filepath.find(".");
-  string writeFilePath = filepath.substr(0, indexDelimeter) + ".asm";
-  this->setWriteFile(writeFilePath);
+  if (std::filesystem::exists(filepath)) {
+    string writeFilePath = filepath.substr(0, indexDelimeter) + ".asm";
+    this->setWriteFile(writeFilePath);
+  } else {
+    cout << "Not working path" << endl;
+    exit(EXIT_FAILURE);
+  }
   this->parser = Parser();
   this->memoryManager = MemoryManager();
   this->codeWritter = CodeWritter();
 }
 void Control::traverseFile() {
+  cout << "in here" << endl;
   string currentCommand;
+  int resultPop;
   while (std::getline(this->readFile, currentCommand)) {
     currentCommand.erase(
         0, currentCommand.find_first_not_of(" \n\r\t")); // left trim
@@ -24,8 +31,10 @@ void Control::traverseFile() {
         //     "constant", this->memoryManager.popStack());
         this->getWriteFile() << this->codeWritter.getArithmeticAssembly();
         this->getWriteFile() << endl;
-        this->getWriteFile() << this->codeWritter.getPushAssembly(
-            "constant", this->memoryManager.popStack(this->parser.getArg1()));
+        resultPop = this->memoryManager.popStack(this->parser.getArg1());
+        this->memoryManager.updateStackMemory(resultPop);
+        this->getWriteFile()
+            << this->codeWritter.getPushAssembly("constant", resultPop);
         this->getWriteFile() << endl;
         break;
       case C_PUSH:
