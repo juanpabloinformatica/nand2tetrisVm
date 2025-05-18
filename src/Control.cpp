@@ -1,14 +1,16 @@
 #include "Control.hpp"
 #include <iostream>
 Control::Control(string filepath) {
-  this->setReadFile(filepath);
-  int indexDelimeter = filepath.find(".");
-  if (std::filesystem::exists(filepath)) {
-    string writeFilePath = filepath.substr(0, indexDelimeter) + ".asm";
-    this->setWriteFile(writeFilePath);
-  } else {
-    cout << "Not working path" << endl;
-    exit(EXIT_FAILURE);
+  if (filepath != "") {
+    this->setReadFile(filepath);
+    int indexDelimeter = filepath.find(".");
+    if (std::filesystem::exists(filepath)) {
+      string writeFilePath = filepath.substr(0, indexDelimeter) + ".asm";
+      this->setWriteFile(writeFilePath);
+    } else {
+      cout << "Not working path" << endl;
+      // exit(EXIT_FAILURE);
+    }
   }
   this->parser = Parser();
   this->memoryManager = MemoryManager();
@@ -29,16 +31,24 @@ void Control::traverseFile() {
       case C_ARITHMETIC:
         // this->getWriteFile() << this->codeWritter.getPushAssembly(
         //     "constant", this->memoryManager.popStack());
+        this->getWriteFile()
+            << "// Setting to 0 last 2 values and then pointing to the n-1 "
+               "value for putting the result in there"
+            << endl;
         this->getWriteFile() << this->codeWritter.getArithmeticAssembly();
         this->getWriteFile() << endl;
         resultPop = this->memoryManager.popStack(this->parser.getArg1());
         this->memoryManager.updateStackMemory(resultPop);
+        this->getWriteFile()
+            << "// Finally pushing the result of the arithmetic operation" << endl;
         this->getWriteFile()
             << this->codeWritter.getPushAssembly("constant", resultPop);
         this->getWriteFile() << endl;
         break;
       case C_PUSH:
         this->memoryManager.updateStackMemory(this->parser.getArg2());
+        this->getWriteFile()
+            << "// Pushing " << std::to_string(this->parser.getArg2()) << endl;
         this->getWriteFile() << this->codeWritter.getPushAssembly(
             this->parser.getArg1(), this->parser.getArg2());
         this->getWriteFile() << endl;

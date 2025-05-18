@@ -57,13 +57,15 @@ int MemoryManager::popStack(string type) {
   if (type == "add") {
     result += this->stackMemory.top();
   } else if (type == "sub") {
-    result -= this->stackMemory.top();
+    result = this->stackMemory.top() - result;
   } else if (type == "eq") {
     result = (result == this->stackMemory.top()) ? -1 : 0;
   } else if (type == "gt") {
-    result = (result > this->stackMemory.top()) ? -1 : 0;
+    // result = (result > this->stackMemory.top()) ? -1 : 0;
+    result = (this->stackMemory.top() > result) ? -1 : 0;
   } else if (type == "lt") {
-    result = (result < this->stackMemory.top()) ? -1 : 0;
+    // result = (result < this->stackMemory.top()) ? -1 : 0;
+    result = (this->stackMemory.top() < result) ? -1 : 0;
   } else if (type == "and") {
     result &= this->stackMemory.top();
   } else if (type == "or") {

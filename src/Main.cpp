@@ -10,4 +10,10 @@ int main(int argc, char *argv[]) {
   string filename = argv[1];
   Control c = Control(filename);
   c.traverseFile();
+  // t' = push constant 3
+  // t''' = push constant -3
+  // t''' = push arg 3
+  // CodeWritter cw = CodeWritter();
+  // cw.getPushAssembly("constant", 3);
+  // cout << cw.getPushAssembly("argument", 2) << endl;
 }

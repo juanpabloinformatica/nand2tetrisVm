@@ -11,15 +11,56 @@ CodeWritter::CodeWritter() {
 }
 string CodeWritter::newPushAssembly(string memorySegment,
                                     int memorySegmentIndex) {
-
   string pushAssemblyInstance = std::string(this->pushAssemblyTemplate);
-  if (Utility::memorySegmentMap.at(memorySegment) == M_S_CONSTANT) {
-    std::regex regexDelimeter = std::regex("\\[(\\n.*)*\\]\\n");
+  if (memorySegmentIndex >= 0) {
+    std::regex regexOpenDelimeter = std::regex("\\[\\n");
     pushAssemblyInstance =
-        std::regex_replace(pushAssemblyInstance, regexDelimeter, "");
+        std::regex_replace(pushAssemblyInstance, regexOpenDelimeter, "",
+                           std::regex_constants::format_first_only);
+    std::regex regexCloseDelimeter = std::regex("\\n\\]");
+    pushAssemblyInstance =
+        std::regex_replace(pushAssemblyInstance, regexCloseDelimeter, "",
+                           std::regex_constants::format_first_only);
+    // std::regex regexDelimeter = std::regex("\\[(\\n.*)*\\]\\n");
+    std::regex regexDelimeter =
+        std::regex("\\n\\[\\n@##index##\\nD=A\\n@16\\nM=0\\n\\(LOOP\\)\\n@"
+                   "16\\nM=M-1\\nD=D-1\\n@LOOP\\nD;JGT\\n@16\\nD=M\\n\\]");
+    pushAssemblyInstance =
+        std::regex_replace(pushAssemblyInstance, regexDelimeter, "",
+                           std::regex_constants::format_first_only);
     std::regex indexRegex = std::regex("\\#\\#index\\#\\#");
     pushAssemblyInstance = std::regex_replace(
         pushAssemblyInstance, indexRegex, std::to_string(memorySegmentIndex));
+  } else {
+    // std::cout << pushAssemblyInstance << std::endl;
+    std::regex regexDelimeter = std::regex("\\[\\n@##index##\\nD=A\\n\\]\\n");
+    pushAssemblyInstance =
+        std::regex_replace(pushAssemblyInstance, regexDelimeter, "",
+                           std::regex_constants::format_first_only);
+    std::regex regexOpenDelimeter = std::regex("\\[");
+    pushAssemblyInstance =
+        std::regex_replace(pushAssemblyInstance, regexOpenDelimeter, "",
+                           std::regex_constants::format_first_only);
+    std::regex regexCloseDelimeter = std::regex("\\n\\]");
+    pushAssemblyInstance =
+        std::regex_replace(pushAssemblyInstance, regexCloseDelimeter, "",
+                           std::regex_constants::format_first_only);
+    std::regex indexRegex = std::regex("\\#\\#index\\#\\#");
+    pushAssemblyInstance =
+        std::regex_replace(pushAssemblyInstance, indexRegex,
+                           std::to_string(-1 * memorySegmentIndex));
+    // std::cout << pushAssemblyInstance << std::endl;
+  }
+  if (Utility::memorySegmentMap.at(memorySegment) == M_S_CONSTANT) {
+    // std::cout << "here 2" << std::endl;
+    std::regex regexDelimeter = std::regex("\\[(\\n.*)*\\]\\n");
+    pushAssemblyInstance =
+        std::regex_replace(pushAssemblyInstance, regexDelimeter, "",
+                           std::regex_constants::format_first_only);
+    std::regex indexRegex = std::regex("\\#\\#index\\#\\#");
+    pushAssemblyInstance = std::regex_replace(
+        pushAssemblyInstance, indexRegex, std::to_string(memorySegmentIndex));
+    // std::cout << pushAssemblyInstance << std::endl;
   } else {
     std::regex regexDelimeter = std::regex("\\[\\n|\\n\\]");
     pushAssemblyInstance =
@@ -71,8 +112,12 @@ string CodeWritter::getArithmeticAssembly() { return newArithmeticAssembly(); }
 
 void CodeWritter::setPushAssemblyTemplate(void) {
   this->pushAssemblyTemplate =
-      std::string("@##index##") + "\n" + "D=A" + "\n" + "[" + "\n" +
-      "@##m_s##" + "\n" + "A=M+D" + "\n" + "D=M" + "\n" +
+      std::string("[") + "\n" + std::string("@##index##") + "\n" + "D=A" +
+      "\n" + "]" + "\n" + "[" + "\n" + "@##index##" + "\n" + +"D=A" + "\n" +
+      +"@16" + "\n" + "M=0" + "\n" + "(LOOP)" + "\n" + "@16" + "\n" + "M=M-1" +
+      "\n" + "D=D-1" + "\n" + "@LOOP" + "\n" + "D;JGT" + "\n" + "@16" + "\n" +
+      "D=M" + "\n" + "]" + "\n" + "[" + "\n" + "@##m_s##" + "\n" + "A=M+D" +
+      "\n" + "D=M" + "\n" +
       "]"
       "\n" +
       "@0" + "\n" + "A=M" + "\n" + "M=D" + "\n" + "@0" + "\n" + "M=M+1" + "\n";
@@ -86,8 +131,10 @@ void CodeWritter::setPopAssemblyTemplate(void) {
       "M=D" + "\n";
 }
 void CodeWritter::setArithmeticAssemblyTemplate(void) {
+  // this->arithmeticAssemblyTemplate =
+  //     std::string("@0") + "\n" + "A=M-1" + "\n" + "M=0" + "\n" + "D=A" + "\n"
+  //     + "D=D-1" + "\n" + "@16" + "\n" + "A=D" + "\n" + "M=0" + "\n" + "@0" +
+  //     "\n" + "M=M-1" + "\n" + "@0" + "\n" + "M=M-1" + "\n";
   this->arithmeticAssemblyTemplate =
-      std::string("@0") + "\n" + "A=M-1" + "\n" + "M=0" + "\n" + "D=A" + "\n" +
-      "D=D-1" + "\n" + "@16" + "\n" + "A=D" + "\n" + "M=0" + "\n" + "@0" +
-      "\n" + "M=M-1" + "\n" + "@0" + "\n" + "M=M-1" + "\n";
+      std::string("@0") + "\n" + "M=M-1" + "\n" + "@0" + "\n" + "M=M-1" + "\n";
 }
