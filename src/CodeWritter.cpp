@@ -105,10 +105,29 @@ string CodeWritter ::newPopAssembly(string memorySegment,
 string CodeWritter::getPopAssembly(string memorySegmentIndex, int index) {
   return newPopAssembly(memorySegmentIndex, index);
 }
-string CodeWritter::newArithmeticAssembly() {
-  return std::string(this->arithmeticAssemblyTemplate);
+string CodeWritter::newArithmeticAssembly(string arithmeticType) {
+  string popArithmeticInstance = string(this->arithmeticAssemblyTemplate);
+  if (arithmeticType == "neg" || arithmeticType == "not" ) {
+    std::cout << "In here ****" << std::endl;
+    std::regex regexDelimeter = std::regex("\\n\\[\\n@0\nM=M-1\\n\\]");
+    std::regex_replace(popArithmeticInstance, regexDelimeter, "");
+    popArithmeticInstance =
+        std::regex_replace(popArithmeticInstance, regexDelimeter, "");
+  } else {
+    std::regex regexOpenDelimeter = std::regex("\\[\\n");
+    std::regex_replace(popArithmeticInstance, regexOpenDelimeter, "");
+    popArithmeticInstance =
+        std::regex_replace(popArithmeticInstance, regexOpenDelimeter, "");
+    std::regex regexCloseDelimeter = std::regex("\\n\\]");
+    std::regex_replace(popArithmeticInstance, regexCloseDelimeter, "");
+    popArithmeticInstance =
+        std::regex_replace(popArithmeticInstance, regexCloseDelimeter, "");
+  }
+  return popArithmeticInstance;
 }
-string CodeWritter::getArithmeticAssembly() { return newArithmeticAssembly(); }
+string CodeWritter::getArithmeticAssembly(string arithmeticType) {
+  return newArithmeticAssembly(arithmeticType);
+}
 
 void CodeWritter::setPushAssemblyTemplate(void) {
   this->pushAssemblyTemplate =
@@ -135,6 +154,7 @@ void CodeWritter::setArithmeticAssemblyTemplate(void) {
   //     std::string("@0") + "\n" + "A=M-1" + "\n" + "M=0" + "\n" + "D=A" + "\n"
   //     + "D=D-1" + "\n" + "@16" + "\n" + "A=D" + "\n" + "M=0" + "\n" + "@0" +
   //     "\n" + "M=M-1" + "\n" + "@0" + "\n" + "M=M-1" + "\n";
-  this->arithmeticAssemblyTemplate =
-      std::string("@0") + "\n" + "M=M-1" + "\n" + "@0" + "\n" + "M=M-1" + "\n";
+  this->arithmeticAssemblyTemplate = std::string("@0") + "\n" + "M=M-1" + "\n" +
+                                     "[" + "\n" + "@0" + "\n" + "M=M-1" + "\n" +
+                                     "]";
 }

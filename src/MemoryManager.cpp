@@ -48,7 +48,7 @@ int MemoryManager::popStack(string type) {
   this->stackMemory.pop();
   // unary operations
   if (type == "not") {
-    return !result;
+    return ~result;
   }
   if (type == "neg") {
     return result * -1;

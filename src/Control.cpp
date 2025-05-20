@@ -35,12 +35,14 @@ void Control::traverseFile() {
             << "// Setting to 0 last 2 values and then pointing to the n-1 "
                "value for putting the result in there"
             << endl;
-        this->getWriteFile() << this->codeWritter.getArithmeticAssembly();
+        this->getWriteFile()
+            << this->codeWritter.getArithmeticAssembly(this->parser.getArg1());
         this->getWriteFile() << endl;
         resultPop = this->memoryManager.popStack(this->parser.getArg1());
         this->memoryManager.updateStackMemory(resultPop);
         this->getWriteFile()
-            << "// Finally pushing the result of the arithmetic operation" << endl;
+            << "// Finally pushing the result of the arithmetic operation"
+            << endl;
         this->getWriteFile()
             << this->codeWritter.getPushAssembly("constant", resultPop);
         this->getWriteFile() << endl;
