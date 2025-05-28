@@ -11,6 +11,7 @@ private:
   string pushAssemblyTemplate;
   string popAssemblyTemplate;
   string arithmeticAssemblyTemplate;
+  int labelCounter;
   // i could do this oop but not  now
   string newPushAssembly(string mememorySegment, int memorySegmentIndex);
   string newPopAssembly(string mememorySegment, int memorySegmentIndex);

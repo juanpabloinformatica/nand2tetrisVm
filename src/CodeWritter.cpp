@@ -1,4 +1,5 @@
 #include "CodeWritter.hpp"
+#include <array>
 #include <regex>
 
 // using std::cout;
@@ -8,6 +9,7 @@ CodeWritter::CodeWritter() {
   this->setPopAssemblyTemplate();
   this->setPushAssemblyTemplate();
   this->setArithmeticAssemblyTemplate();
+  this->labelCounter = 0;
 }
 string CodeWritter::newPushAssembly(string memorySegment,
                                     int memorySegmentIndex) {
@@ -49,6 +51,11 @@ string CodeWritter::newPushAssembly(string memorySegment,
     pushAssemblyInstance =
         std::regex_replace(pushAssemblyInstance, indexRegex,
                            std::to_string(-1 * memorySegmentIndex));
+
+    std::regex labelCounterRegex = std::regex("\\#\\#labelCounter\\#\\#");
+    pushAssemblyInstance = std::regex_replace(
+        pushAssemblyInstance, labelCounterRegex, std::to_string(this->labelCounter));
+    this->labelCounter++;
     // std::cout << pushAssemblyInstance << std::endl;
   }
   if (Utility::memorySegmentMap.at(memorySegment) == M_S_CONSTANT) {
@@ -107,12 +114,14 @@ string CodeWritter::getPopAssembly(string memorySegmentIndex, int index) {
 }
 string CodeWritter::newArithmeticAssembly(string arithmeticType) {
   string popArithmeticInstance = string(this->arithmeticAssemblyTemplate);
-  if (arithmeticType == "neg" || arithmeticType == "not" ) {
-    std::cout << "In here ****" << std::endl;
+  if (arithmeticType == "neg" || arithmeticType == "not") {
+    std::cout << "****** type ****" << std::endl;
+    std::cout << "****** " << arithmeticType << "****" << std::endl;
     std::regex regexDelimeter = std::regex("\\n\\[\\n@0\nM=M-1\\n\\]");
     std::regex_replace(popArithmeticInstance, regexDelimeter, "");
     popArithmeticInstance =
         std::regex_replace(popArithmeticInstance, regexDelimeter, "");
+    std::cout << popArithmeticInstance << std::endl;
   } else {
     std::regex regexOpenDelimeter = std::regex("\\[\\n");
     std::regex_replace(popArithmeticInstance, regexOpenDelimeter, "");
@@ -133,10 +142,10 @@ void CodeWritter::setPushAssemblyTemplate(void) {
   this->pushAssemblyTemplate =
       std::string("[") + "\n" + std::string("@##index##") + "\n" + "D=A" +
       "\n" + "]" + "\n" + "[" + "\n" + "@##index##" + "\n" + +"D=A" + "\n" +
-      +"@16" + "\n" + "M=0" + "\n" + "(LOOP)" + "\n" + "@16" + "\n" + "M=M-1" +
-      "\n" + "D=D-1" + "\n" + "@LOOP" + "\n" + "D;JGT" + "\n" + "@16" + "\n" +
-      "D=M" + "\n" + "]" + "\n" + "[" + "\n" + "@##m_s##" + "\n" + "A=M+D" +
-      "\n" + "D=M" + "\n" +
+      +"@16" + "\n" + "M=0" + "\n" + "(LOOP##labelCounter##)" + "\n" + "@16" +
+      "\n" + "M=M-1" + "\n" + "D=D-1" + "\n" + "@LOOP##labelCounter##" + "\n" +
+      "D;JGT" + "\n" + "@16" + "\n" + "D=M" + "\n" + "]" + "\n" + "[" + "\n" +
+      "@##m_s##" + "\n" + "A=M+D" + "\n" + "D=M" + "\n" +
       "]"
       "\n" +
       "@0" + "\n" + "A=M" + "\n" + "M=D" + "\n" + "@0" + "\n" + "M=M+1" + "\n";
