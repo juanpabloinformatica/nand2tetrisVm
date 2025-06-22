@@ -5,15 +5,17 @@
 #include <string>
 using std::map;
 using std::string;
-enum M_S {
-  M_S_SP = 0,
-  M_S_LCL = 1,
-  M_S_ARG = 2,
-  M_S_THIS = 3,
-  M_S_THAT = 4,
-  M_S_CONSTANT = 5,
-
-};
+const int M_S_CONSTANT = 874;
+const int NOTREFMS = 6000;
+// enum M_S {
+//   M_S_SP = 0,
+//   M_S_LCL = 1,
+//   M_S_ARG = 2,
+//   M_S_THIS = 3,
+//   M_S_THAT = 4,
+//   M_S_CONSTANT = 5,
+//
+// };
 enum COMMAND_TYPE {
   // C_UNDEFINED = -1,
   C_ARITHMETIC = 1,
@@ -32,18 +34,5 @@ public:
   static string getFilepath(string file);
   static map<string, int> memorySegmentMap;
 };
-// a lot of wasted memory
-#include <iostream>
-// #include <string>
-// using namespace std;
-
-// int main ()
-// {
-//     string str("one three two four");
-//     string str2("three");
-//     str.replace(str.find(str2),str2.length(),"five");
-//     cout << str << endl;
-//     return 0;
-// }
 
 #endif

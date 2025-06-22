@@ -1,4 +1,5 @@
 #include "Control.hpp"
+#include "Utilities.hpp"
 #include <iostream>
 Control::Control(string filepath) {
   if (filepath != "") {
@@ -9,7 +10,7 @@ Control::Control(string filepath) {
       this->setWriteFile(writeFilePath);
     } else {
       cout << "Not working path" << endl;
-      // exit(EXIT_FAILURE);
+      exit(EXIT_FAILURE);
     }
   }
   this->parser = Parser();
@@ -29,33 +30,93 @@ void Control::traverseFile() {
       this->parser.operateCommand(currentCommand);
       switch (this->parser.getCommandType()) {
       case C_ARITHMETIC:
-        // this->getWriteFile() << this->codeWritter.getPushAssembly(
-        //     "constant", this->memoryManager.popStack());
         this->getWriteFile()
             << "// Setting to 0 last 2 values and then pointing to the n-1 "
-               "value for putting the result in there"
-            << endl;
+               "value for putting the result in there\n"
+            << "//" << currentCommand << endl;
         this->getWriteFile()
             << this->codeWritter.getArithmeticAssembly(this->parser.getArg1());
         this->getWriteFile() << endl;
         resultPop = this->memoryManager.popStack(this->parser.getArg1());
         this->memoryManager.updateStackMemory(resultPop);
         this->getWriteFile()
-            << "// Finally pushing the result of the arithmetic operation"
+            << "// Finally pushing the result of the arithmetic operation\n"
             << endl;
         this->getWriteFile()
-            << this->codeWritter.getPushAssembly("constant", resultPop);
-        this->getWriteFile() << endl;
+            << this->codeWritter.getPushAssembly("constant", resultPop, 13);
+        if (this->parser.getArg1() != "not" ||
+            this->parser.getArg1() != "neg") {
+          std::cout << "Popped twice" << std::endl;
+        } else {
+          std::cout << "Popped once" << std::endl;
+        }
+        this->memoryManager.showStack();
         break;
       case C_PUSH:
-        this->memoryManager.updateStackMemory(this->parser.getArg2());
+        int valueToPush;
+        if (this->parser.getArg1() == "constant") {
+          valueToPush = this->parser.getArg2();
+          // this->memoryManager.updateStackMemory(valueToPush);
+        } else if (this->parser.getArg1() == "local") {
+          valueToPush = this->memoryManager.getMSLocal(this->parser.getArg2());
+        } else if (this->parser.getArg1() == "argument") {
+          valueToPush =
+              this->memoryManager.getMSArgument(this->parser.getArg2());
+        } else if (this->parser.getArg1() == "this") {
+          valueToPush = this->memoryManager.getMSThis(this->parser.getArg2());
+        } else if (this->parser.getArg1() == "that") {
+          valueToPush = this->memoryManager.getMSThat(this->parser.getArg2());
+        } else if (this->parser.getArg1() == "static") {
+          valueToPush = this->memoryManager.getMSStatic(this->parser.getArg2());
+        } else if (this->parser.getArg1() == "pointer") {
+          valueToPush =
+              this->memoryManager.getMSPointer(this->parser.getArg2());
+        } else if (this->parser.getArg1() == "temp") {
+          valueToPush = this->memoryManager.getMSTemp(this->parser.getArg2());
+        } else {
+          valueToPush = 0;
+          std::cout << ".vm file incorrect" << std::endl;
+          exit(0);
+        }
+        this->memoryManager.updateStackMemory(valueToPush);
+        this->getWriteFile() << "//" << currentCommand << endl;
         this->getWriteFile()
-            << "// Pushing " << std::to_string(this->parser.getArg2()) << endl;
-        this->getWriteFile() << this->codeWritter.getPushAssembly(
-            this->parser.getArg1(), this->parser.getArg2());
-        this->getWriteFile() << endl;
+            << this->codeWritter.getPushAssembly(this->parser.getArg1(),
+                                                 this->parser.getArg2(), 13)
+            << endl;
+        std::cout << "Pushing Once" << std::endl;
+        this->memoryManager.showStack();
         break;
       case C_POP:
+        this->getWriteFile() << "//" << currentCommand << endl;
+        resultPop = this->memoryManager.popStack();
+        if (this->parser.getArg1() == "local") {
+          this->memoryManager.updateMSLocal(this->parser.getArg2(), resultPop);
+        } else if (this->parser.getArg1() == "argument") {
+          this->memoryManager.updateMSArgument(this->parser.getArg2(),
+                                               resultPop);
+        } else if (this->parser.getArg1() == "this") {
+          this->memoryManager.updateMSThis(this->parser.getArg2(), resultPop);
+        } else if (this->parser.getArg1() == "that") {
+          this->memoryManager.updateMSThat(this->parser.getArg2(), resultPop);
+        } else if (this->parser.getArg1() == "static") {
+          this->memoryManager.updateMSStatic(this->parser.getArg2(), resultPop);
+        } else if (this->parser.getArg1() == "pointer") {
+          this->memoryManager.updateMSPointer(this->parser.getArg2(),
+                                              resultPop);
+        } else if (this->parser.getArg1() == "temp") {
+          this->memoryManager.updateMSTemp(this->parser.getArg2(), resultPop);
+        } else {
+          std::cout << ".vm file incorrect" << std::endl;
+          exit(0);
+        }
+        this->getWriteFile()
+            << this->codeWritter.getPopAssembly(this->parser.getArg1(),
+                                                this->parser.getArg2(), 13, 14)
+            << endl;
+
+        // this->memoryManager.popStack();
+        this->memoryManager.showStack();
         break;
       case C_LABEL:
         break;

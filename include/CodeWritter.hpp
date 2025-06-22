@@ -13,8 +13,9 @@ private:
   string arithmeticAssemblyTemplate;
   int labelCounter;
   // i could do this oop but not  now
-  string newPushAssembly(string mememorySegment, int memorySegmentIndex);
-  string newPopAssembly(string mememorySegment, int memorySegmentIndex);
+  string newPushAssembly(string mememorySegment, int memorySegmentIndex, int var1);
+  string newPopAssembly(string mememorySegment, int memorySegmentIndex, int var1,
+                        int var2);
   string newArithmeticAssembly(string arithmeticType);
 
 public:
@@ -23,9 +24,10 @@ public:
   void setPushAssemblyTemplate(void);
   void setPopAssemblyTemplate(void);
   void setArithmeticAssemblyTemplate(void);
-  string getPushAssembly(string segment, int index);
-  string getPopAssembly(string segment, int index);
+  string getPushAssembly(string segment, int index, int var1);
+  string getPopAssembly(string segment, int index, int var1, int var2);
   string getArithmeticAssembly(string arithmeticType);
+  string cleanGpr(void);
 
   // ~CodeWritter();
   // void writeArithmetic(string command);

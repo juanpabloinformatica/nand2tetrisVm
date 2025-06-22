@@ -3,10 +3,24 @@
 #include <iostream>
 
 MemoryManager::MemoryManager() {
+  initMSegments();
+
   // this->setTempMemorySegment();
   // this->setPointerMemorySegment();
   // this->setRamMemorySegment();
 }
+void MemoryManager::initMSegments() {
+  for (int i = 0; i < 200; i++) {
+    this->MSLocal.push_back(0);
+    this->MSArgument.push_back(0);
+    this->MSThat.push_back(0);
+    this->MSThis.push_back(0);
+    this->MSStatic.push_back(0);
+    this->MSPointer.push_back(0);
+    this->MSTemp.push_back(0);
+  }
+}
+
 MemoryManager::~MemoryManager() {}
 // void MemoryManager::setPointerMemorySegment(void) {
 //   for (int i = 0; i < POINTER_MEMORY_LENGTH - 1; i++) {
@@ -20,7 +34,7 @@ MemoryManager::~MemoryManager() {}
 // }
 // void MemoryManager::setRamMemorySegment(void) {
 //   // if size() giving the top
-//   // using defautl stack or vector???
+//   // using defautl stack or vector??
 //   this->ramMemory.at(0) = stackMemory.size();
 //   this->ramMemory.at(1) = this->localMemorySegment.pointer;
 //   this->ramMemory.at(2) = this->argumentMemorySegment.pointer;
@@ -46,6 +60,9 @@ void MemoryManager::updateStackMemory(int value) {
 int MemoryManager::popStack(string type) {
   int result = this->stackMemory.top();
   this->stackMemory.pop();
+  if (type == "null") {
+    return result;
+  }
   // unary operations
   if (type == "not") {
     return ~result;
@@ -74,3 +91,85 @@ int MemoryManager::popStack(string type) {
   this->stackMemory.pop();
   return result;
 }
+// bool MemoryManager::isInNotDynamicPool(int registerVal) {
+//   return registerVal >= NOT_DYN_MEMORY_SEGMENT_MIN_INDEX &&
+//          registerVal >= NOT_DYN_MEMORY_SEGMENT_MAX_INDEX;
+// }
+// bool MemoryManager::isIntempMSPool(int registerVal) {
+//   return registerVal >= TEMP_MEMORY_SEGMENT_MIN_INDEX &&
+//          registerVal <= TEMP_MEMORY_SEGMENT_MAX_INDEX;
+// }
+// bool MemoryManager::isInpointerMSPool(int registerVal) {
+//   return registerVal >= POINTER_MEMORY_SEGMENT_MIN_INDEX &&
+//          registerVal <= POINTER_MEMORY_SEGMENT_MAX_INDEX;
+// }
+// bool MemoryManager::isInstaticMSPool(int registerVal) {
+//   return registerVal >= STATIC_MEMORY_SEGMENT_MIN_INDEX &&
+//          registerVal <= STATIC_MEMORY_SEGMENT_MAX_INDEX;
+// }
+// void MemoryManager::updateMemorySegmentMap(string _memorySegmentMap,
+//                                            bool isPush) {
+//   if (!(_memorySegmentMap == "pointer" || _memorySegmentMap == "temp" ||
+//         _memorySegmentMap == "static")) {
+//     return;
+//   }
+//   if (isPush) {
+//     this->memorySegmentMap[_memorySegmentMap] += 1;
+//   } else {
+//     this->memorySegmentMap[_memorySegmentMap] -= 1;
+//   }
+// }
+void MemoryManager::showStack(void) {
+  std::stack temp{this->stackMemory};
+  std::cout << "STACK" << std::endl;
+  std::cout << "[" << std::endl;
+  std::string toShow = "";
+  while (temp.size()) {
+    std::cout << " - " << temp.top() << '\n';
+    temp.pop();
+  }
+  std::cout << "]" << std::endl;
+}
+int MemoryManager::getMemorySegmentMap(string _memorySegmentMap,
+                                       int memorySegmentIndex) {
+  // std::cout <<this->memorySegmentMap[_memorySegmentMap] + memorySegmentIndex
+  // <<std::endl;
+  return this->memorySegmentMap[_memorySegmentMap];
+  // return this->memorySegmentMap[_memorySegmentMap];
+}
+
+void MemoryManager::updateMSLocal(int index, int value) {
+  this->MSLocal[index] = value;
+}
+void MemoryManager::updateMSArgument(int index, int value) {
+  this->MSArgument[index] = value;
+}
+void MemoryManager::updateMSThis(int index, int value) {
+  this->MSThis[index] = value;
+}
+void MemoryManager::updateMSThat(int index, int value) {
+  this->MSThat[index] = value;
+}
+void MemoryManager::updateMSStatic(int index, int value) {
+  this->MSStatic[index] = value;
+}
+void MemoryManager::updateMSPointer(int index, int value) {
+  this->MSPointer[index] = value;
+}
+void MemoryManager::updateMSTemp(int index, int value) {
+  this->MSTemp[index] = value;
+}
+int MemoryManager::getMSLocal(int index) { return this->MSLocal[index]; }
+int MemoryManager::getMSArgument(int index) { return this->MSArgument[index]; }
+int MemoryManager::getMSThis(int index) { return this->MSThis[index]; }
+int MemoryManager::getMSThat(int index) { return this->MSThat[index]; }
+int MemoryManager::getMSStatic(int index) { return this->MSStatic[index]; }
+int MemoryManager::getMSPointer(int index) { return this->MSPointer[index]; }
+int MemoryManager::getMSTemp(int index) { return this->MSTemp[index]; }
+// void MemoryManager::showMS(vector<int> &memorySegment) {
+//   std::cout << "[" << std::endl;
+//   for (int i = 0; i < memorySegment.size(); i++) {
+//     std::cout << memorySegment[i] << std::endl;
+//   }
+//   std::cout << "]" << std::endl;
+// }
