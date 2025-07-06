@@ -21,8 +21,9 @@ void Parser::operateCommand(string currentCommand) {
     this->setArg1(this->getSplitCurrentCommand()[1]);
     if (this->getCommandType() == C_PUSH || this->getCommandType() == C_POP ||
         this->getCommandType() == C_FUNCTION ||
-        this->getCommandType() == C_CALL)
+        this->getCommandType() == C_CALL) {
       this->setArg2(stoi(this->getSplitCurrentCommand()[2]));
+    }
   }
   this->resetSplitCurrentCommand();
 }
@@ -45,9 +46,7 @@ void Parser::setMapCommand() {
   this->mapCommand["pop"] = C_POP;
   this->mapCommand["label"] = C_LABEL;
   this->mapCommand["goto"] = C_GOTO;
-  // need to check what this expresion tries to do
-  // this->mapCArithmetic["if-goto"] = C_GOTO;
-  this->mapCommand["if"] = C_IF;
+  this->mapCommand["if-goto"] = C_IF;
   this->mapCommand["function"] = C_FUNCTION;
   this->mapCommand["return"] = C_RETURN;
   this->mapCommand["call"] = C_CALL;
@@ -61,7 +60,7 @@ void Parser::setSplitCurrentCommand(string currentCommand) {
   stringstream currentCommandStream = stringstream(currentCommand);
   string word;
   int i = 0;
-  while (currentCommandStream >> word) {
+  while (currentCommandStream >> word && word != "//") {
     this->splitCurrentCommand[i++] = word;
   }
 }

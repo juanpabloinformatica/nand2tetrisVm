@@ -14,6 +14,9 @@ int main(int argc, char *argv[]) {
   // t''' = push constant -3
   // t''' = push arg 3
   // CodeWritter cw = CodeWritter();
+
+  // std::cout << cw.getWriteIfTemplate("LOOP")<<std::endl;
+  // std::cout << cw.getWriteGotoTemplate("LOOP")<<std::endl;
   // std::cout << cw.getPushAssembly("local", 3, 13) << std::endl;
   // std::cout << cw.getPushAssembly("pointer", 3, 13) << std::endl;
   // std::cout <<;
