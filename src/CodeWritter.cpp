@@ -1,12 +1,17 @@
 #include "CodeWritter.hpp"
 #include "Utilities.hpp"
 #include <array>
+#include <iostream>
 #include <regex>
 
 CodeWritter::CodeWritter() {
   this->setPopAssemblyTemplate();
   this->setPushAssemblyTemplate();
   this->setArithmeticAssemblyTemplate();
+  // Adding init for branching
+  this->setWriteLabelTemplate();
+  this->setWriteGotoTemplate();
+  this->setWriteIfTemplate();
   this->labelCounter = 0;
 }
 string CodeWritter::newPushAssembly(string memorySegment,
@@ -241,9 +246,6 @@ string CodeWritter::newPushAssembly(string memorySegment,
   }
   return pushAssemblyInstance;
 }
-string CodeWritter::getPushAssembly(string segment, int index, int var1) {
-  return newPushAssembly(segment, index, var1);
-}
 // i need the string in here for do that condition
 string CodeWritter ::newPopAssembly(string memorySegment,
                                     int memorySegmentIndex, int var1,
@@ -311,10 +313,6 @@ string CodeWritter ::newPopAssembly(string memorySegment,
 
   return popAssemblyInstance;
 }
-string CodeWritter::getPopAssembly(string memorySegmentIndex, int index,
-                                   int var1, int var2) {
-  return newPopAssembly(memorySegmentIndex, index, var1, var2);
-}
 string CodeWritter::newArithmeticAssembly(string arithmeticType) {
   string popArithmeticInstance = string(this->arithmeticAssemblyTemplate);
   if (arithmeticType == "neg" || arithmeticType == "not") {
@@ -336,12 +334,51 @@ string CodeWritter::newArithmeticAssembly(string arithmeticType) {
   }
   return popArithmeticInstance;
 }
+string CodeWritter::newWriteLabel(string label) {
+  string writeLabelInstance = string(this->writeLabelTemplate);
+  std::regex regexLabel = std::regex(R"(\#\#LABEL\#\#)");
+  writeLabelInstance =
+      std::regex_replace(writeLabelInstance, regexLabel, label);
+  return writeLabelInstance;
+}
+string CodeWritter::newWriteGoto(string label) {
+  string writeGotoInstance = string(this->writeGotoTemplate);
+  std::regex regexLabel = std::regex(R"(\#\#LABEL\#\#)");
+  writeGotoInstance = std::regex_replace(writeGotoInstance, regexLabel, label);
+  return writeGotoInstance;
+}
+string CodeWritter::newWriteIf(string label) {
+  string writeIfInstance = string(this->writeIfTemplate);
+  std::regex regexLabel = std::regex(R"(\#\#LABEL\#\#)");
+  writeIfInstance = std::regex_replace(writeIfInstance, regexLabel, label);
+  return writeIfInstance;
+}
 // string CodeWritter::cleanGpr() {
 //   return std::string("@13") + "\n" + "M=0" + "\n" + "@14" + "\n" + "M=0" +
 //          "\n" + "@15" + "\n" + "M=0" + "\n";
 // }
+
+string CodeWritter::getPushAssembly(string segment, int index, int var1) {
+  return newPushAssembly(segment, index, var1);
+}
+string CodeWritter::getPopAssembly(string memorySegmentIndex, int index,
+                                   int var1, int var2) {
+  return newPopAssembly(memorySegmentIndex, index, var1, var2);
+}
 string CodeWritter::getArithmeticAssembly(string arithmeticType) {
   return newArithmeticAssembly(arithmeticType);
+}
+
+string CodeWritter::getWriteLabelTemplate(string label) {
+  return this->newWriteLabel(label);
+}
+
+string CodeWritter::getWriteGotoTemplate(string label) {
+  return this->newWriteGoto(label);
+}
+
+string CodeWritter::getWriteIfTemplate(string label) {
+  return this->newWriteIf(label);
 }
 /*
  *PUSH
@@ -445,4 +482,14 @@ void CodeWritter::setArithmeticAssemblyTemplate(void) {
   this->arithmeticAssemblyTemplate = std::string("@0") + "\n" + "M=M-1" + "\n" +
                                      "[" + "\n" + "@0" + "\n" + "M=M-1" + "\n" +
                                      "]";
+}
+void CodeWritter::setWriteLabelTemplate(void) {
+  this->writeLabelTemplate = "(##LABEL##)";
+}
+void CodeWritter::setWriteGotoTemplate(void) {
+  this->writeGotoTemplate = std::string("@0") + "\n" + "A=M" + "\n" + "D=M" +
+                            "\n" + "@##LABEL##" + "\n" + "D;JGT";
+}
+void CodeWritter::setWriteIfTemplate(void) {
+  this->writeIfTemplate = std::string("@##LABEL##") + "\n" + "0;JMP";
 }

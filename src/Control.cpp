@@ -119,10 +119,32 @@ void Control::traverseFile() {
         this->memoryManager.showStack();
         break;
       case C_LABEL:
+        this->getWriteFile() << "//" << currentCommand << endl;
+        cout << "________________" << endl;
+        cout << this->parser.getArg1() << endl;
+        this->getWriteFile()
+            << this->codeWritter.getWriteLabelTemplate(this->parser.getArg1())
+            << endl;
+        cout << "________________" << endl;
         break;
       case C_GOTO:
+        this->getWriteFile() << "//" << currentCommand << endl;
+        cout << "________________" << endl;
+        cout << this->parser.getArg1() << endl;
+        this->getWriteFile()
+            << this->codeWritter.getWriteGotoTemplate(this->parser.getArg1())
+            << endl;
+        cout << "________________" << endl;
         break;
       case C_IF:
+        // parser is working?????
+        this->getWriteFile() << "//" << currentCommand << endl;
+        cout << "________________" << endl;
+        cout << this->parser.getArg1() << endl;
+        this->getWriteFile()
+            << this->codeWritter.getWriteIfTemplate(this->parser.getArg1())
+            << endl;
+        cout << "________________" << endl;
         break;
       case C_FUNCTION:
         break;
