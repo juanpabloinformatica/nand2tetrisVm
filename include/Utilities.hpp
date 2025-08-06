@@ -30,7 +30,7 @@ enum COMMAND_TYPE {
 };
 // i think is better do all of this static honestly
 class Utility {
-public:
+ public:
   static string getFilepath(string file);
   static map<string, int> memorySegmentMap;
 };

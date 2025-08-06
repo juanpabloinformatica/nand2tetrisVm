@@ -25,7 +25,7 @@ using std::stack;
 using std::string;
 using std::vector;
 class MemoryManager {
-private:
+ private:
   stack<int> stackMemory;
   int staticIndex{16};
   int tempIndex{5};
@@ -48,17 +48,17 @@ private:
   vector<int> MSPointer;
   vector<int> MSTemp;
 
-public:
+ public:
   MemoryManager();
   ~MemoryManager();
   int getMemorySegmentMap(string _memorySegmentMap, int memorySegmentIndex = 0);
-  vector<int> &getMSLocal(void);
-  vector<int> &getMSArgument(void);
-  vector<int> &getMSThis(void);
-  vector<int> &getMSThat(void);
-  vector<int> &getMSStatic(void);
-  vector<int> &getMSPointer(void);
-  vector<int> &getMSTemp(void);
+  vector<int>& getMSLocal(void);
+  vector<int>& getMSArgument(void);
+  vector<int>& getMSThis(void);
+  vector<int>& getMSThat(void);
+  vector<int>& getMSStatic(void);
+  vector<int>& getMSPointer(void);
+  vector<int>& getMSTemp(void);
   void updateMSLocal(int index, int value);
   void updateMSArgument(int index, int value);
   void updateMSThis(int index, int value);
@@ -81,6 +81,7 @@ public:
   int getMSTemp(int index);
   void initMSegments();
   void showStack();
-  void showMS(vector<int> &memorySegment);
+  string showStack2();
+  void showMS(vector<int>& memorySegment);
 };
 #endif

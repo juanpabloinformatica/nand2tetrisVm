@@ -1,12 +1,12 @@
 #ifndef __CODE_WRITTER__
 
 #define __CODE_WRITTER__
-#include "Utilities.hpp"
 #include <fstream>
+#include "Utilities.hpp"
 using std::ofstream;
 using std::string;
 class CodeWritter {
-private:
+ private:
   string pushAssemblyTemplate;
   string popAssemblyTemplate;
   string arithmeticAssemblyTemplate;
@@ -24,7 +24,7 @@ private:
   string newWriteGoto(string label);
   string newWriteIf(string label);
 
-public:
+ public:
   CodeWritter();
   void setPushAssemblyTemplate(void);
   void setPopAssemblyTemplate(void);
