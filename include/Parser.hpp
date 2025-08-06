@@ -1,6 +1,5 @@
 #ifndef __PARSER__
 #define __PARSER__
-#include "Utilities.hpp"
 #include <array>
 #include <fstream>
 #include <iostream>
@@ -9,6 +8,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "Utilities.hpp"
 #define ARRAY_LENGTH 3
 
 using std::array;
@@ -20,14 +20,14 @@ using std::stoi;
 using std::string;
 using std::stringstream;
 class Parser {
-private:
+ private:
   string arg1;
   int arg2;
   COMMAND_TYPE commandType;
   array<string, ARRAY_LENGTH> splitCurrentCommand;
   map<string, COMMAND_TYPE> mapCommand;
 
-public:
+ public:
   Parser();
   ~Parser();
   void operateCommand(string currentCommand);
@@ -37,10 +37,10 @@ public:
   void setSplitCurrentCommand(string currentCommand);
   void setMapCommand();
   void resetSplitCurrentCommand();
-  const array<string, ARRAY_LENGTH> &getSplitCurrentCommand();
-  const map<string, COMMAND_TYPE> &getMapCommand();
+  const array<string, ARRAY_LENGTH>& getSplitCurrentCommand();
+  const map<string, COMMAND_TYPE>& getMapCommand();
   string getArg1();
   int getArg2();
-  COMMAND_TYPE &getCommandType();
+  COMMAND_TYPE& getCommandType();
 };
 #endif

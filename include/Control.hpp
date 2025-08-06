@@ -1,28 +1,28 @@
 #ifndef __CONTROL__
 #define __CONTROL__
+#include <fstream>
 #include "CodeWritter.hpp"
 #include "MemoryManager.hpp"
 #include "Parser.hpp"
-#include <fstream>
 using std::fstream;
 using std::ifstream;
 using std::ofstream;
 using std::string;
 class Control {
-private:
+ private:
   ifstream readFile;
   ofstream writeFile;
   Parser parser;
   CodeWritter codeWritter;
   MemoryManager memoryManager;
 
-public:
+ public:
   Control(string filepath);
   ~Control();
   void setReadFile(string filepath);
-  ifstream &getReadFile();
+  ifstream& getReadFile();
   void setWriteFile(string filepath);
-  ofstream &getWriteFile();
+  ofstream& getWriteFile();
   void traverseFile();
 };
 #endif
