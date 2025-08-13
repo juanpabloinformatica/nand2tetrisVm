@@ -4,7 +4,7 @@
 void testParser(std::string filename) {
   Parser p = Parser();
   Control c = Control(Utility::getFilepath(filename));
-   string text;
+  string text;
   //  while (std::getline(c.getReadFile(), text)) {
   //    cout << text << endl;
   //  }

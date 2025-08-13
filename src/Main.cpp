@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
   // std::cout << cw.getWriteIfTemplate("LOOP")<<std::endl;
   // std::cout << cw.getWriteGotoTemplate("LOOP")<<std::endl;
   // std::cout << cw.getPushAssembly("local", 3, 13) << std::endl;
-  std::cout << cw.getArithmeticAssembly("add") << std::endl;
+  // std::cout << cw.getArithmeticAssembly("not") << std::endl;
   // std::cout <<;
 
   // std::cout << "CASE IS POINTER | TEMP | STATIC" << std::endl;
