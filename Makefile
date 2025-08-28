@@ -1,60 +1,68 @@
-# Thanks to Job Vranish (https://spin.atomicobject.com/2016/08/26/makefile-c-projects/) // inspired from
-# https://makefiletutorial.com
-CXXFLAGS := -g -Wall -Werror -std=c++20
-CXX  := g++
-TARGET_EXEC  := vm
+.PHONY: all clean library
 
-BUILD_DIR:= ./build
-SRC_DIR := ./src
-INC_DIR := ./include
-TEST_DIR := ./test
+CXXFLAGS := -g -std=c++17 -Werror -Wall
+CXX := g++
 
-# this can be done better
-# SRCS := $(wildcard $(SRC_DIR)/*.cpp)
-# SRCS += $(wildcard $(TEST_DIR)/*.cpp)
-SRCS := $(shell find . -type f -name "*.cpp")
-OBJS:= $(SRCS:%=$(BUILD_DIR)/%.o)
+executable := vm
+lib_name := libvm.so
 
-# --------- I want to understand this part -------------
-# # String substitution (suffix version without %).
-# # As an example, ./build/hello.cpp.o turns into ./build/hello.cpp.d
-DEPS := $(OBJS:.o=.d)
+work_dir := $(shell pwd)
+build_dir := build
+src_dir := src
+lib_dir := library
+include_dir := include
 
-# INC_DIRS := $(shell find $(SRC_DIR) -type d)
-INC_FLAGS := $(addprefix -I,$(INC_DIR))
+srcs := $(shell find ${src_dir} -type f -name "*.cpp" )
+srcs_objs := $(patsubst %,${build_dir}/%.o,${srcs})
+lib_objs := $(patsubst ${src_dir}/%,${build_dir}/${lib_dir}/%.o,${srcs})
+deps := $(patsubst %,${build_dir}/%.d,${srcs})
 
-# --------- I want to understand this part -------------
-# The -MMD and -MP flags together generate Makefiles for us!
-# These files will have .d instead of .o as the output.
-CPPFLAGS := $(INC_FLAGS) -MMD -MP
+CXXFLAGS += $(addprefix -I,${include_dir})
+CXXFLAGS += -MMD -MP
 
-# the only thing here not clear is that LDFLAGS
-# the final and default build step
-$(BUILD_DIR)/$(TARGET_EXEC):$(OBJS)
-	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
+all: target
 
-#build the compiledb
+target: ${build_dir}/${executable}	##		For generating executable that will run the vm translator
 
-# Build step for C source
-# $(BUILD_DIR)/%.c.o: %.c
-# 	mkdir -p $(dir $@)
-# 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
-#
-# Build step for C++ source -- here what is not clear for
-# me is %.cpp.o
-$(BUILD_DIR)/%.cpp.o: %.cpp
-	mkdir -p $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+${build_dir}/${executable}: ${srcs_objs}
+	$(CXX)   $^ -o  $@
 
-# compile_commands.json: $(SRCS)
-# 	compiledb
+${build_dir}/${src_dir}/%.cpp.o: ${src_dir}/%.cpp
+	mkdir -p ${@D}
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-.PHONY: clean
-clean:
-	rm -r $(BUILD_DIR)
+#################################################
+################### Library ####################
+################################################
 
-# --------- I want to understand this part -------------
-# Include the .d makefiles. The - at the front suppresses the errors of missing
-# Makefiles. Initially, all the .d files will be missing, and we don't want those
-# errors to show up.
--include $(DEPS)
+CLIBFLAGS := $(filter-out -MMD -MP ,${CXXFLAGS})
+CLIBFLAGS += -fPIC -shared
+
+$(info ${CLIBFLAGS})
+
+LDFLAGS := -L ${build_dir}/${lib_dir}
+LDLIBS := -Wl,--rpath=${build_dir}/${lib_dir}
+
+lib_objs := $(filter-out %Main.cpp.o,${lib_objs})
+
+library: ${build_dir}/${lib_dir}/${lib_name}	##		Making vm library for testing
+
+${build_dir}/${lib_dir}/${lib_name}: ${lib_objs}
+	$(CXX) $(CLIBFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
+
+${build_dir}/${lib_dir}/%.cpp.o: ${src_dir}/%.cpp
+	mkdir -p ${@D}
+	$(CXX) $(CLIBFLAGS) -c $< -o $@
+
+	-include ./test.mk
+
+clean: ##		Removing generated objects, dependencies and binaries
+	rm -rf ${build_dir}
+
+	-include ${deps}
+
+help: ##		Help, showing all the possible targets and its functionalities
+	@grep -Pi "^.*\:.*\#\#" ${MAKEFILE_LIST} \
+		| sed 's/\$${.*}//g' \
+		| awk 'BEGIN{FS=":";OFS="\t"};{print $$1,$$2}' \
+		| sed -E 's/\s.*\#\#\s*/\t\t\t/g'
