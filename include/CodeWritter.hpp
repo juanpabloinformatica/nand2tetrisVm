@@ -14,6 +14,8 @@ class CodeWritter {
   string writeGotoTemplate;
   string writeIfTemplate;
   int labelCounter;
+  int firstLabelCounter;
+  int continueLabelCounter;
   string newPushAssembly(string mememorySegment, int memorySegmentIndex,
                          int var1);
   string newPopAssembly(string mememorySegment, int memorySegmentIndex,

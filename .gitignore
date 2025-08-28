@@ -3,4 +3,5 @@ tags
 *Session
 .cache
 compile_commands.json
+Session.vim
 

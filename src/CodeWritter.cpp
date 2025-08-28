@@ -1,5 +1,4 @@
 #include "CodeWritter.hpp"
-#include <array>
 #include <iostream>
 #include <regex>
 #include "Utilities.hpp"
@@ -13,8 +12,15 @@ CodeWritter::CodeWritter() {
   this->setWriteGotoTemplate();
   this->setWriteIfTemplate();
   this->labelCounter = 0;
-  std::cout << this->arithmeticAssemblyTemplate << std::endl;
-  exit(0);
+  this->firstLabelCounter = 0;
+  this->continueLabelCounter = 0;
+  // std::cout << this->writeLabelTemplate << std::endl;
+  // std::cout << this->popAssemblyTemplate << std::endl;
+  // std::cout << this->pushAssemblyTemplate << std::endl;
+  // std::cout << this->arithmeticAssemblyTemplate << std::endl;
+  // std::cout << this->arithmeticAssemblyTemplate << std::endl;
+  // std::cout << this->arithmeticAssemblyTemplate << std::endl;
+  // exit(0);
 }
 string CodeWritter::newPushAssembly(string memorySegment,
                                     int memorySegmentIndex, int var1) {
@@ -337,9 +343,25 @@ string CodeWritter ::newPopAssembly(string memorySegment,
 }
 string CodeWritter::newArithmeticAssembly(string arithmeticType) {
   string popArithmeticInstance = string(this->arithmeticAssemblyTemplate);
+  std::regex removeConditions = std::regex(R"(\[(.|\n)*\]\n)");
+  // std::regex removeConditions =std::regex(R"(\[(.|\n)*\]\n)");
+  // std::regex removeConditions =std::regex(R"(\[(.|\n)*\]\n)");
   if (arithmeticType == "neg" || arithmeticType == "not") {
 
     std::regex regexRemoveSecondOperand = std::regex(R"(\[(.|\n)*?\]\n)");
+    popArithmeticInstance =
+        std::regex_replace(popArithmeticInstance, regexRemoveSecondOperand, "",
+                           std::regex_constants::format_first_only);
+    popArithmeticInstance =
+        std::regex_replace(popArithmeticInstance, std::regex(R"(@13)"), "",
+                           std::regex_constants::format_first_only);
+    popArithmeticInstance =
+        std::regex_replace(popArithmeticInstance, regexRemoveSecondOperand, "",
+                           std::regex_constants::format_first_only);
+
+    popArithmeticInstance =
+        std::regex_replace(popArithmeticInstance, regexRemoveSecondOperand, "",
+                           std::regex_constants::format_first_only);
     popArithmeticInstance =
         std::regex_replace(popArithmeticInstance, regexRemoveSecondOperand, "",
                            std::regex_constants::format_first_only);
@@ -357,21 +379,28 @@ string CodeWritter::newArithmeticAssembly(string arithmeticType) {
     std::regex operation = std::regex(R"(##operation##)");
     if (arithmeticType == "neg") {
 
-      std::cout << "in here --------" << std::endl;
+      // std::cout << "------ In NEG --------" << std::endl;
+      // std::cout << popArithmeticInstance <<std::endl;
+      // exit(0);
+      popArithmeticInstance =
+          std::regex_replace(popArithmeticInstance, operation, std::string("-"),
+                             std::regex_constants::format_first_only);
+      popArithmeticInstance =
+          std::regex_replace(popArithmeticInstance, std::regex(R"(\(.*\#\#.*\#\#\)\n)"), "",
+                             std::regex_constants::format_first_only);
+    } else if (arithmeticType == "not") {
+      std::cout << "------ In NOT --------" << std::endl;
       popArithmeticInstance =
           std::regex_replace(popArithmeticInstance, operation, std::string("!"),
                              std::regex_constants::format_first_only);
-    } else if (arithmeticType == "not") {
-      std::cout << "in here --------" << std::endl;
       popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, operation, std::string("-"),
+          std::regex_replace(popArithmeticInstance, std::regex(R"(\(.*\#\#.*\#\#\)\n)"), "",
                              std::regex_constants::format_first_only);
     } else {
       exit(1);
     }
-    std::cout << "Right here" << std::endl;
+    // std::cout << "Right here" << std::endl;
     std::cout << popArithmeticInstance << std::endl;
-    exit(0);
   } else {
     std::regex regexOpenDelimeter = std::regex(R"(\[\n)");
     popArithmeticInstance =
@@ -398,12 +427,30 @@ string CodeWritter::newArithmeticAssembly(string arithmeticType) {
       popArithmeticInstance =
           std::regex_replace(popArithmeticInstance, operation, std::string("+"),
                              std::regex_constants::format_first_only);
+
+      popArithmeticInstance =
+          std::regex_replace(popArithmeticInstance, removeConditions, "",
+                             std::regex_constants::format_first_only);
+      std::regex removeContinueLabel = std::regex(R"(\(CONTINUE\#\#continueLabelCounter\#\#\))");
+      popArithmeticInstance =
+                  std::regex_replace(popArithmeticInstance, removeContinueLabel, "",
+                                                   std::regex_constants::format_first_only);
+
+      // popArithmeticInstance =
+      //     std::regex_replace(popArithmeticInstance, operation, std::string("+"),
+      //                        std::regex_constants::format_first_only);
     } else if (arithmeticType == "sub") {
       std::cout << "in here --------" << std::endl;
       popArithmeticInstance =
           std::regex_replace(popArithmeticInstance, operation, std::string("-"),
                              std::regex_constants::format_first_only);
-
+      popArithmeticInstance =
+          std::regex_replace(popArithmeticInstance, removeConditions, "",
+                             std::regex_constants::format_first_only);
+      std::regex removeContinueLabel = std::regex(R"(\(CONTINUE\#\#continueLabelCounter\#\#\))");
+      popArithmeticInstance =
+                  std::regex_replace(popArithmeticInstance, removeContinueLabel, "",
+                                                   std::regex_constants::format_first_only);
     } else if (arithmeticType == "eq") {
 
       std::cout << "in here --------" << std::endl;
@@ -421,7 +468,18 @@ string CodeWritter::newArithmeticAssembly(string arithmeticType) {
       popArithmeticInstance =
           std::regex_replace(popArithmeticInstance, removeGTAndLT, "",
                              std::regex_constants::format_first_only);
+      std::regex setFirstLabel = std::regex(R"(\#\#firstLabelCounter\#\#)");
+      std::regex setContinueLabel =
+          std::regex(R"(\#\#continueLabelCounter\#\#)");
 
+      popArithmeticInstance =
+          std::regex_replace(popArithmeticInstance, setFirstLabel,
+                             std::to_string(this->firstLabelCounter));
+      this->firstLabelCounter++;
+      popArithmeticInstance =
+          std::regex_replace(popArithmeticInstance, setContinueLabel,
+                             std::to_string(this->continueLabelCounter));
+      this->continueLabelCounter++;
 
     } else if (arithmeticType == "gt") {
 
@@ -442,11 +500,22 @@ string CodeWritter::newArithmeticAssembly(string arithmeticType) {
           std::regex_replace(popArithmeticInstance, regexCloseDelimeter, "",
                              std::regex_constants::format_first_only);
 
-      std::regex removeLT= std::regex(R"(\[(.|\n)*?\]\n)");
+      std::regex removeLT = std::regex(R"(\[(.|\n)*?\]\n)");
       popArithmeticInstance =
           std::regex_replace(popArithmeticInstance, removeLT, "",
                              std::regex_constants::format_first_only);
+      std::regex setFirstLabel = std::regex(R"(\#\#firstLabelCounter\#\#)");
+      std::regex setContinueLabel =
+          std::regex(R"(\#\#continueLabelCounter\#\#)");
 
+      popArithmeticInstance =
+          std::regex_replace(popArithmeticInstance, setFirstLabel,
+                             std::to_string(this->firstLabelCounter));
+      this->firstLabelCounter++;
+      popArithmeticInstance =
+          std::regex_replace(popArithmeticInstance, setContinueLabel,
+                             std::to_string(this->continueLabelCounter));
+      this->continueLabelCounter++;
     } else if (arithmeticType == "lt") {
 
       std::cout << "in here --------" << std::endl;
@@ -454,11 +523,11 @@ string CodeWritter::newArithmeticAssembly(string arithmeticType) {
           std::regex_replace(popArithmeticInstance, operation, std::string("-"),
                              std::regex_constants::format_first_only);
 
-      std::regex removeGT= std::regex(R"(\[(.|\n)*?\]\n)");
+      std::regex removeGT = std::regex(R"(\[(.|\n)*?\]\n)");
       popArithmeticInstance =
           std::regex_replace(popArithmeticInstance, removeGT, "",
                              std::regex_constants::format_first_only);
-      std::regex removeEQ= std::regex(R"(\[(.|\n)*?\]\n)");
+      std::regex removeEQ = std::regex(R"(\[(.|\n)*?\]\n)");
       popArithmeticInstance =
           std::regex_replace(popArithmeticInstance, removeEQ, "",
                              std::regex_constants::format_first_only);
@@ -469,19 +538,44 @@ string CodeWritter::newArithmeticAssembly(string arithmeticType) {
       popArithmeticInstance =
           std::regex_replace(popArithmeticInstance, regexCloseDelimeter, "",
                              std::regex_constants::format_first_only);
+      std::regex setFirstLabel = std::regex(R"(\#\#firstLabelCounter\#\#)");
+      std::regex setContinueLabel =
+          std::regex(R"(\#\#continueLabelCounter\#\#)");
 
+      popArithmeticInstance =
+          std::regex_replace(popArithmeticInstance, setFirstLabel,
+                             std::to_string(this->firstLabelCounter));
+      this->firstLabelCounter++;
+      popArithmeticInstance =
+          std::regex_replace(popArithmeticInstance, setContinueLabel,
+                             std::to_string(this->continueLabelCounter));
+      this->continueLabelCounter++;
     } else if (arithmeticType == "and") {
 
       std::cout << "in here --------" << std::endl;
       popArithmeticInstance =
           std::regex_replace(popArithmeticInstance, operation, std::string("&"),
                              std::regex_constants::format_first_only);
+      popArithmeticInstance =
+          std::regex_replace(popArithmeticInstance, removeConditions, "",
+                             std::regex_constants::format_first_only);
+      std::regex removeContinueLabel = std::regex(R"(\(CONTINUE\#\#continueLabelCounter\#\#\))");
+      popArithmeticInstance =
+                  std::regex_replace(popArithmeticInstance, removeContinueLabel, "",
+                                                   std::regex_constants::format_first_only);
     } else if (arithmeticType == "or") {
 
       std::cout << "in here --------" << std::endl;
       popArithmeticInstance =
           std::regex_replace(popArithmeticInstance, operation, std::string("|"),
                              std::regex_constants::format_first_only);
+      popArithmeticInstance =
+          std::regex_replace(popArithmeticInstance, removeConditions, "",
+                             std::regex_constants::format_first_only);
+      std::regex removeContinueLabel = std::regex(R"(\(CONTINUE\#\#continueLabelCounter\#\#\))");
+      popArithmeticInstance =
+                  std::regex_replace(popArithmeticInstance, removeContinueLabel, "",
+                                                   std::regex_constants::format_first_only);
     } else {
       exit(1);
     }
@@ -640,46 +734,46 @@ void CodeWritter::setPopAssemblyTemplate(void) {
   D=D##operation##M
   ]
  ** EQ
- "[" + "\n"
- "@FIRST" + "\n"
- "D;JEQ" + "\n"
- "@SECOND" + "\n"
- "D=0" + "\n"
- "@CONTINUE" + "\n"
- "0;JMP" + "\n"
- "(FIRST)" + "\n"
- "D=-1" + "\n"
- "@CONTINUE" + "\n"
- "0;JMP" + "\n"
- "(CONTINUE)" + "\n"
- "]" + "\n"
+  [
+  @FIRST
+  D;JEQ
+  @SECOND
+  D=0
+  @CONTINUE
+  0;JMP
+  (FIRST)
+  D=-1
+  @CONTINUE
+  0;JMP
+  (CONTINUE)
+  ]
  ** GT
- "[" + "\n"
- "@FIRST" + "\n"
- "D;JGT" + "\n"
- "@SECOND" + "\n"
- "D=0" + "\n"
- "@CONTINUE" + "\n"
- "0;JMP" + "\n"
- "(FIRST)" + "\n"
- "D=-1" + "\n"
- "@CONTINUE" + "\n"
- "0;JMP" + "\n"
- "(CONTINUE)" + "\n"
- "]" + "\n"
- "[" + "\n"
- "@FIRST" + "\n"
- "D;JLT" + "\n"
- "@SECOND" + "\n"
- "D=0" + "\n"
- "@CONTINUE" + "\n"
- "0;JMP" + "\n"
- "(FIRST)" + "\n"
- "D=-1" + "\n"
- "@CONTINUE" + "\n"
- "0;JMP" + "\n"
- "(CONTINUE)" + "\n"
- "]" + "\n"
+  [
+  @FIRST
+  D;JGT
+  @SECOND
+  D=0
+  @CONTINUE
+  0;JMP
+  (FIRST)
+  D=-1
+  @CONTINUE
+  0;JMP
+  (CONTINUE)
+  ]
+  [
+  @FIRST
+  D;JLT
+  @SECOND
+  D=0
+  @CONTINUE
+  0;JMP
+  (FIRST)
+  D=-1
+  @CONTINUE
+  0;JMP
+  (CONTINUE)
+  ]
  [
  D=##operation##D
  ]
@@ -747,21 +841,21 @@ void CodeWritter::setArithmeticAssemblyTemplate(void) {
                                      "\n"
                                      "[" +
                                      "\n"
-                                     "@FIRST" +
+                                     "@FIRST##firstLabelCounter##" +
                                      "\n"
                                      "D;JEQ" +
                                      "\n"
                                      "D=0" +
                                      "\n"
-                                     "@CONTINUE" +
+                                     "@CONTINUE##continueLabelCounter##" +
                                      "\n"
                                      "0;JMP" +
                                      "\n"
-                                     "(FIRST)" +
+                                     "(FIRST##firstLabelCounter##)" +
                                      "\n"
                                      "D=-1" +
                                      "\n"
-                                     "@CONTINUE" +
+                                     "@CONTINUE##continueLabelCounter##" +
                                      "\n"
                                      "0;JMP" +
                                      "\n"
@@ -769,21 +863,21 @@ void CodeWritter::setArithmeticAssemblyTemplate(void) {
                                      "\n"
                                      "[" +
                                      "\n"
-                                     "@FIRST" +
+                                     "@FIRST##firstLabelCounter##" +
                                      "\n"
                                      "D;JGT" +
                                      "\n"
                                      "D=0" +
                                      "\n"
-                                     "@CONTINUE" +
+                                     "@CONTINUE##continueLabelCounter##" +
                                      "\n"
                                      "0;JMP" +
                                      "\n"
-                                     "(FIRST)" +
+                                     "(FIRST##firstLabelCounter##)" +
                                      "\n"
                                      "D=-1" +
                                      "\n"
-                                     "@CONTINUE" +
+                                     "@CONTINUE##continueLabelCounter##" +
                                      "\n"
                                      "0;JMP" +
                                      "\n"
@@ -791,21 +885,21 @@ void CodeWritter::setArithmeticAssemblyTemplate(void) {
                                      "\n"
                                      "[" +
                                      "\n"
-                                     "@FIRST" +
+                                     "@FIRST##firstLabelCounter##" +
                                      "\n"
                                      "D;JLT" +
                                      "\n"
                                      "D=0" +
                                      "\n"
-                                     "@CONTINUE" +
+                                     "@CONTINUE##continueLabelCounter##" +
                                      "\n"
                                      "0;JMP" +
                                      "\n"
-                                     "(FIRST)" +
+                                     "(FIRST##firstLabelCounter##)" +
                                      "\n"
                                      "D=-1" +
                                      "\n"
-                                     "@CONTINUE" +
+                                     "@CONTINUE##continueLabelCounter##" +
                                      "\n"
                                      "0;JMP" +
                                      "\n"
@@ -817,7 +911,7 @@ void CodeWritter::setArithmeticAssemblyTemplate(void) {
                                      "\n"
                                      "]" +
                                      "\n"
-                                     "(CONTINUE)"
+                                     "(CONTINUE##continueLabelCounter##)"
                                      "\n"
                                      "@0" +
                                      "\n"
