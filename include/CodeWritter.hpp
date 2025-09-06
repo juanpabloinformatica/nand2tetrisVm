@@ -1,10 +1,12 @@
 #ifndef __CODE_WRITTER__
-
 #define __CODE_WRITTER__
 #include <fstream>
+#include <map>
+#include <regex>
 #include "Utilities.hpp"
 using std::ofstream;
 using std::string;
+using std::regex_constants::format_first_only;
 class CodeWritter {
  private:
   string pushAssemblyTemplate;
@@ -16,11 +18,23 @@ class CodeWritter {
   int labelCounter;
   int firstLabelCounter;
   int continueLabelCounter;
+  string _arithmeticAssemblyBinary(string arithmeticType,
+                                   string arithmeticAssemblyInstance);
+  string _arithmeticAssemblyBinaryNotBool(string arithmeticType,
+                                          string arithmeticAssemblyInstance);
+  string _arithmeticAssemblyBinaryBool(string arithmeticType,
+                                       string arithmeticAssemblyInstance);
+  string _arithmeticAssemblyUnary(string arithmeticType,
+                                  string arithmeticAssemblyInstance);
+
   string newPushAssembly(string mememorySegment, int memorySegmentIndex,
                          int var1);
   string newPopAssembly(string mememorySegment, int memorySegmentIndex,
                         int var1, int var2);
   string newArithmeticAssembly(string arithmeticType);
+  string transformTemplate(std::map<std::string, std::string>& patternMatchMap,
+                           string assemblyTemplate);
+
   // Adding branching
   string newWriteLabel(string label);
   string newWriteGoto(string label);
@@ -40,12 +54,5 @@ class CodeWritter {
   string getWriteLabelTemplate(string label);
   string getWriteGotoTemplate(string label);
   string getWriteIfTemplate(string label);
-  // ~CodeWritter();
-  // void writeArithmetic(string command);
-  // void writePush(COMMAND_TYPE commandType, string segment, int index);
-  // void writePop(COMMAND_TYPE commandType, string segment, int index);
-  // void setWriteFile(string fileName);
-  // closing the output file
-  // void close
 };
 #endif

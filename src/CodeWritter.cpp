@@ -1,6 +1,5 @@
 #include "CodeWritter.hpp"
 #include <iostream>
-#include <regex>
 #include "Utilities.hpp"
 
 CodeWritter::CodeWritter() {
@@ -14,47 +13,9 @@ CodeWritter::CodeWritter() {
   this->labelCounter = 0;
   this->firstLabelCounter = 0;
   this->continueLabelCounter = 0;
-  // std::cout << this->writeLabelTemplate << std::endl;
-  // std::cout << this->popAssemblyTemplate << std::endl;
-  // std::cout << this->pushAssemblyTemplate << std::endl;
-  // std::cout << this->arithmeticAssemblyTemplate << std::endl;
-  // std::cout << this->arithmeticAssemblyTemplate << std::endl;
-  // std::cout << this->arithmeticAssemblyTemplate << std::endl;
-  // exit(0);
 }
 string CodeWritter::newPushAssembly(string memorySegment,
                                     int memorySegmentIndex, int var1) {
-
-  /*
-   * [
-   * @##index##
-   * D=A
-   * ]
-   * [
-   * @##index##
-   * D=A
-   * @13
-   * M=0
-   * (LOOP##labelCounter##)
-   * @13
-   * M=M-1
-   * D=D-1
-   * @LOOP##labelCounter##
-   * D;JGT
-   * @13
-   * D=M
-   * ]
-   * [
-   * @##m_s##
-   * A=D+M
-   * D=M
-   * ]
-   * @0
-   * A=M
-   * M=D
-   * @0
-   * M=M+1
-   * */
   string pushAssemblyInstance = std::string(this->pushAssemblyTemplate);
   if (memorySegmentIndex >= 0) {
     std::regex regexOpenDelimeter = std::regex(R"(\[\n)");
@@ -82,22 +43,6 @@ string CodeWritter::newPushAssembly(string memorySegment,
         std::regex_replace(pushAssemblyInstance, regexDelimeter, "",
                            std::regex_constants::format_first_only);
 
-    /*
-     *
-     * @memorySegmentIndex
-     *
-     * D=A
-     * [
-     * @##m_s##
-     * A=D+M
-     * D=M
-     * ]
-     * @0
-     * A=M
-     * M=D
-     * @0
-     * M=M+1
-     * */
   } else {
     // std::cout << pushAssemblyInstance << std::endl;
     std::regex var1Regex = std::regex(R"(\#\#var1\#\#)");
@@ -133,31 +78,6 @@ string CodeWritter::newPushAssembly(string memorySegment,
                            std::to_string(this->labelCounter));
     this->labelCounter++;
     // std::cout << pushAssemblyInstance << std::endl;
-
-    /*
-     * @index
-     * D=A
-     * @13
-     * M=0
-     * (LOOPlabelCounter)
-     * @13
-     * M=M-1
-     * D=D-1
-     * @LOOPlabelCounter
-     * D;JGT
-     * @13
-     * D=M
-     * [
-     * @##m_s##
-     * A=D+M
-     * D=M
-     * ]
-     * @0
-     * A=M
-     * M=D
-     * @0
-     * M=M+1
-     * */
   }
   if (memorySegment == "constant") {
     std::cout << "Entering in CONSTANT" << std::endl;
@@ -167,34 +87,10 @@ string CodeWritter::newPushAssembly(string memorySegment,
         std::regex_replace(pushAssemblyInstance, regexDelimeter, "",
                            std::regex_constants::format_first_only);
   } else {
-    /*
-     *
-     * @memorySegmentIndex
-     * D=A
-     * [
-     * @##m_s##
-     * [
-     * A=D+M
-     * D=M
-     * ]
-     * [
-     * D=D+M
-     * ]
-     * ]
-     * @0
-     * A=M
-     * M=D
-     * @0
-     * M=M+1
-     * */
     std::regex firstDelimeterRegex = std::regex(R"(\[\n)");
     pushAssemblyInstance =
         std::regex_replace(pushAssemblyInstance, firstDelimeterRegex, "",
                            std::regex_constants::format_first_only);
-    // std::regex regexCloseDelimeter = std::regex(R"(\n\])");
-    // pushAssemblyInstance =
-    //     std::regex_replace(pushAssemblyInstance, regexCloseDelimeter, "",
-    //                        std::regex_constants::format_first_only);
     if (memorySegment == "pointer" || memorySegment == "temp" ||
         memorySegment == "static") {
       std::cout << "IN:  POINTER | TEMP | STATIC " << std::endl;
@@ -211,44 +107,12 @@ string CodeWritter::newPushAssembly(string memorySegment,
       pushAssemblyInstance =
           std::regex_replace(pushAssemblyInstance, cleanRegex, "M\n",
                              std::regex_constants::format_first_only);
-      /*
-       * @memorySegmentIndex
-       * D=A
-       * @##m_s##
-       * D=D+M
-       * @0
-       * A=M
-       * M=D
-       * @0
-       * M=M+1
-       *
-       * */
       std::regex memorySegmentRegex = std::regex(R"(\#\#m_s\#\#)");
       pushAssemblyInstance = std::regex_replace(
           pushAssemblyInstance, memorySegmentRegex,
           std::to_string(Utility::memorySegmentMap[memorySegment] +
                          memorySegmentIndex));
     } else {
-      /*
-       *
-       * @memorySegmentIndex
-       * D=A
-       * [
-       * @##m_s##
-       * [
-       * A=D+M
-       * D=M
-       * ]
-       * [
-       * D=D+M
-       * ]
-       * ]
-       * @0
-       * A=M
-       * M=D
-       * @0
-       * M=M+1
-       * */
       std::cout << "IN NOT :  POINTER | TEMP | STATIC " << std::endl;
       std::regex regexOpenDelimeter = std::regex(R"(\[\n)");
       pushAssemblyInstance =
@@ -274,7 +138,6 @@ string CodeWritter::newPushAssembly(string memorySegment,
   }
   return pushAssemblyInstance;
 }
-// i need the string in here for do that condition
 string CodeWritter ::newPopAssembly(string memorySegment,
                                     int memorySegmentIndex, int var1,
                                     int var2) {
@@ -341,246 +204,154 @@ string CodeWritter ::newPopAssembly(string memorySegment,
 
   return popAssemblyInstance;
 }
-string CodeWritter::newArithmeticAssembly(string arithmeticType) {
-  string popArithmeticInstance = string(this->arithmeticAssemblyTemplate);
-  std::regex removeConditions = std::regex(R"(\[(.|\n)*\]\n)");
-  // std::regex removeConditions =std::regex(R"(\[(.|\n)*\]\n)");
-  // std::regex removeConditions =std::regex(R"(\[(.|\n)*\]\n)");
-  if (arithmeticType == "neg" || arithmeticType == "not") {
-
-    std::regex regexRemoveSecondOperand = std::regex(R"(\[(.|\n)*?\]\n)");
-    popArithmeticInstance =
-        std::regex_replace(popArithmeticInstance, regexRemoveSecondOperand, "",
-                           std::regex_constants::format_first_only);
-    popArithmeticInstance =
-        std::regex_replace(popArithmeticInstance, std::regex(R"(@13)"), "",
-                           std::regex_constants::format_first_only);
-    popArithmeticInstance =
-        std::regex_replace(popArithmeticInstance, regexRemoveSecondOperand, "",
-                           std::regex_constants::format_first_only);
-
-    popArithmeticInstance =
-        std::regex_replace(popArithmeticInstance, regexRemoveSecondOperand, "",
-                           std::regex_constants::format_first_only);
-    popArithmeticInstance =
-        std::regex_replace(popArithmeticInstance, regexRemoveSecondOperand, "",
-                           std::regex_constants::format_first_only);
-    popArithmeticInstance =
-        std::regex_replace(popArithmeticInstance, regexRemoveSecondOperand, "",
-                           std::regex_constants::format_first_only);
-    std::regex regexOpenDelimeter = std::regex(R"(\[\n)");
-    popArithmeticInstance =
-        std::regex_replace(popArithmeticInstance, regexOpenDelimeter, "",
-                           std::regex_constants::format_first_only);
-    std::regex regexCloseDelimeter = std::regex(R"(\n\])");
-    popArithmeticInstance =
-        std::regex_replace(popArithmeticInstance, regexCloseDelimeter, "",
-                           std::regex_constants::format_first_only);
-    std::regex operation = std::regex(R"(##operation##)");
-    if (arithmeticType == "neg") {
-
-      // std::cout << "------ In NEG --------" << std::endl;
-      // std::cout << popArithmeticInstance <<std::endl;
-      // exit(0);
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, operation, std::string("-"),
-                             std::regex_constants::format_first_only);
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, std::regex(R"(\(.*\#\#.*\#\#\)\n)"), "",
-                             std::regex_constants::format_first_only);
-    } else if (arithmeticType == "not") {
-      std::cout << "------ In NOT --------" << std::endl;
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, operation, std::string("!"),
-                             std::regex_constants::format_first_only);
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, std::regex(R"(\(.*\#\#.*\#\#\)\n)"), "",
-                             std::regex_constants::format_first_only);
-    } else {
-      exit(1);
-    }
-    // std::cout << "Right here" << std::endl;
-    std::cout << popArithmeticInstance << std::endl;
-  } else {
-    std::regex regexOpenDelimeter = std::regex(R"(\[\n)");
-    popArithmeticInstance =
-        std::regex_replace(popArithmeticInstance, regexOpenDelimeter, "",
-                           std::regex_constants::format_first_only);
-    std::regex regexCloseDelimeter = std::regex(R"(\n\])");
-    popArithmeticInstance =
-        std::regex_replace(popArithmeticInstance, regexCloseDelimeter, "",
-                           std::regex_constants::format_first_only);
-    popArithmeticInstance =
-        std::regex_replace(popArithmeticInstance, regexOpenDelimeter, "",
-                           std::regex_constants::format_first_only);
-    popArithmeticInstance =
-        std::regex_replace(popArithmeticInstance, regexCloseDelimeter, "",
-                           std::regex_constants::format_first_only);
-    std::regex regexUnaryDelimeter =
-        std::regex(R"(\[\nD=##operation##D\n\]\n)");
-    popArithmeticInstance =
-        std::regex_replace(popArithmeticInstance, regexUnaryDelimeter, "",
-                           std::regex_constants::format_first_only);
-    std::regex operation = std::regex(R"(##operation##)");
-    if (arithmeticType == "add") {
-      std::cout << "in here --------" << std::endl;
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, operation, std::string("+"),
-                             std::regex_constants::format_first_only);
-
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, removeConditions, "",
-                             std::regex_constants::format_first_only);
-      std::regex removeContinueLabel = std::regex(R"(\(CONTINUE\#\#continueLabelCounter\#\#\))");
-      popArithmeticInstance =
-                  std::regex_replace(popArithmeticInstance, removeContinueLabel, "",
-                                                   std::regex_constants::format_first_only);
-
-      // popArithmeticInstance =
-      //     std::regex_replace(popArithmeticInstance, operation, std::string("+"),
-      //                        std::regex_constants::format_first_only);
-    } else if (arithmeticType == "sub") {
-      std::cout << "in here --------" << std::endl;
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, operation, std::string("-"),
-                             std::regex_constants::format_first_only);
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, removeConditions, "",
-                             std::regex_constants::format_first_only);
-      std::regex removeContinueLabel = std::regex(R"(\(CONTINUE\#\#continueLabelCounter\#\#\))");
-      popArithmeticInstance =
-                  std::regex_replace(popArithmeticInstance, removeContinueLabel, "",
-                                                   std::regex_constants::format_first_only);
-    } else if (arithmeticType == "eq") {
-
-      std::cout << "in here --------" << std::endl;
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, operation, std::string("-"),
-                             std::regex_constants::format_first_only);
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, regexOpenDelimeter, "",
-                             std::regex_constants::format_first_only);
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, regexCloseDelimeter, "",
-                             std::regex_constants::format_first_only);
-
-      std::regex removeGTAndLT = std::regex(R"(\[(.|\n)*\]\n)");
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, removeGTAndLT, "",
-                             std::regex_constants::format_first_only);
-      std::regex setFirstLabel = std::regex(R"(\#\#firstLabelCounter\#\#)");
-      std::regex setContinueLabel =
-          std::regex(R"(\#\#continueLabelCounter\#\#)");
-
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, setFirstLabel,
-                             std::to_string(this->firstLabelCounter));
-      this->firstLabelCounter++;
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, setContinueLabel,
-                             std::to_string(this->continueLabelCounter));
-      this->continueLabelCounter++;
-
-    } else if (arithmeticType == "gt") {
-
-      std::cout << "in here --------" << std::endl;
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, operation, std::string("-"),
-                             std::regex_constants::format_first_only);
-
-      std::regex removeEQ = std::regex(R"(\[(.|\n)*?\]\n)");
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, removeEQ, "",
-                             std::regex_constants::format_first_only);
-
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, regexOpenDelimeter, "",
-                             std::regex_constants::format_first_only);
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, regexCloseDelimeter, "",
-                             std::regex_constants::format_first_only);
-
-      std::regex removeLT = std::regex(R"(\[(.|\n)*?\]\n)");
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, removeLT, "",
-                             std::regex_constants::format_first_only);
-      std::regex setFirstLabel = std::regex(R"(\#\#firstLabelCounter\#\#)");
-      std::regex setContinueLabel =
-          std::regex(R"(\#\#continueLabelCounter\#\#)");
-
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, setFirstLabel,
-                             std::to_string(this->firstLabelCounter));
-      this->firstLabelCounter++;
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, setContinueLabel,
-                             std::to_string(this->continueLabelCounter));
-      this->continueLabelCounter++;
-    } else if (arithmeticType == "lt") {
-
-      std::cout << "in here --------" << std::endl;
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, operation, std::string("-"),
-                             std::regex_constants::format_first_only);
-
-      std::regex removeGT = std::regex(R"(\[(.|\n)*?\]\n)");
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, removeGT, "",
-                             std::regex_constants::format_first_only);
-      std::regex removeEQ = std::regex(R"(\[(.|\n)*?\]\n)");
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, removeEQ, "",
-                             std::regex_constants::format_first_only);
-
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, regexOpenDelimeter, "",
-                             std::regex_constants::format_first_only);
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, regexCloseDelimeter, "",
-                             std::regex_constants::format_first_only);
-      std::regex setFirstLabel = std::regex(R"(\#\#firstLabelCounter\#\#)");
-      std::regex setContinueLabel =
-          std::regex(R"(\#\#continueLabelCounter\#\#)");
-
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, setFirstLabel,
-                             std::to_string(this->firstLabelCounter));
-      this->firstLabelCounter++;
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, setContinueLabel,
-                             std::to_string(this->continueLabelCounter));
-      this->continueLabelCounter++;
-    } else if (arithmeticType == "and") {
-
-      std::cout << "in here --------" << std::endl;
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, operation, std::string("&"),
-                             std::regex_constants::format_first_only);
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, removeConditions, "",
-                             std::regex_constants::format_first_only);
-      std::regex removeContinueLabel = std::regex(R"(\(CONTINUE\#\#continueLabelCounter\#\#\))");
-      popArithmeticInstance =
-                  std::regex_replace(popArithmeticInstance, removeContinueLabel, "",
-                                                   std::regex_constants::format_first_only);
-    } else if (arithmeticType == "or") {
-
-      std::cout << "in here --------" << std::endl;
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, operation, std::string("|"),
-                             std::regex_constants::format_first_only);
-      popArithmeticInstance =
-          std::regex_replace(popArithmeticInstance, removeConditions, "",
-                             std::regex_constants::format_first_only);
-      std::regex removeContinueLabel = std::regex(R"(\(CONTINUE\#\#continueLabelCounter\#\#\))");
-      popArithmeticInstance =
-                  std::regex_replace(popArithmeticInstance, removeContinueLabel, "",
-                                                   std::regex_constants::format_first_only);
-    } else {
-      exit(1);
-    }
+string CodeWritter::_arithmeticAssemblyUnary(
+    string arithmeticType, string arithmeticAssemblyInstance) {
+  std::map<std::string, std::string> test =
+      std::map<std::string, std::string>();
+  test[R"(\n\[)"] = "";
+  test[R"(\n\])"] = "";
+  test[R"(\#\#operation\#\#)"] = arithmeticType == "not" ? "!" : "-";
+  test[R"(\n\])"] = "";
+  test[R"(\n\[(.|\n)*\])"] = "";
+  return this->transformTemplate(test, arithmeticAssemblyInstance);
+}
+string CodeWritter::transformTemplate(
+    std::map<std::string, std::string>& patternMatchMap,
+    string assemblyTemplate) {
+  for (auto element : patternMatchMap) {
+    assemblyTemplate =
+        std::regex_replace(assemblyTemplate, std::regex(element.first),
+                           element.second, format_first_only);
   }
-  return popArithmeticInstance;
+  return assemblyTemplate;
+}
+string CodeWritter::_arithmeticAssemblyBinaryNotBool(
+    string arithmeticType, string arithmeticAssemblyInstance) {
+
+  std::regex replaceOperation = std::regex(R"(\#\#operation\#\#)");
+  std::regex replaceOpenDelimeter = std::regex(R"(\[\n)");
+  std::regex replaceCloseDelimeter = std::regex(R"(\]\n)");
+  std::regex replaceUnused = std::regex(R"(\[(\n|.)*?\]\n)");
+  std::regex replaceUnusedBranching = std::regex(R"(\[(\n|.)*\]\n)");
+  std::string operation = "";
+  arithmeticAssemblyInstance = std::regex_replace(
+      arithmeticAssemblyInstance, replaceUnused, "", format_first_only);
+  arithmeticAssemblyInstance = std::regex_replace(
+      arithmeticAssemblyInstance, replaceOpenDelimeter, "", format_first_only);
+  arithmeticAssemblyInstance = std::regex_replace(
+      arithmeticAssemblyInstance, replaceCloseDelimeter, "", format_first_only);
+  arithmeticAssemblyInstance = std::regex_replace(arithmeticAssemblyInstance,
+                                                  replaceUnusedBranching, "");
+
+  if (arithmeticType == "add") {
+    operation = "+";
+  } else if (arithmeticType == "sub") {
+    operation = "-";
+  } else if (arithmeticType == "and") {
+    operation = "&";
+  } else {
+    operation = "|";
+  }
+  arithmeticAssemblyInstance =
+      std::regex_replace(arithmeticAssemblyInstance, replaceOperation,
+                         operation, format_first_only);
+  return arithmeticAssemblyInstance;
+}
+string CodeWritter::_arithmeticAssemblyBinaryBool(
+    string arithmeticType, string arithmeticAssemblyInstance) {
+  std::regex replaceOperation = std::regex(R"(\#\#operation\#\#)");
+  std::regex replaceOpenDelimeter = std::regex(R"(\[\n)");
+  std::regex replaceCloseDelimeter = std::regex(R"(\]\n)");
+  std::regex replaceCloseLastDelimeter = std::regex(R"(M\=M\+1\n\]\n)");
+  std::regex replaceUnused = std::regex(R"(\[(.|\n)*?\]\n)");
+  std::regex replaceContinueLabel =
+      std::regex(R"(\#\#continueLabelCounter\#\#)");
+  std::regex replaceFirstLabel = std::regex(R"(\#\#firstLabelCounter\#\#)");
+
+  arithmeticAssemblyInstance = std::regex_replace(
+      arithmeticAssemblyInstance, replaceUnused, "", format_first_only);
+  arithmeticAssemblyInstance = std::regex_replace(
+      arithmeticAssemblyInstance, replaceUnused, "", format_first_only);
+  arithmeticAssemblyInstance = std::regex_replace(
+      arithmeticAssemblyInstance, replaceOpenDelimeter, "", format_first_only);
+  arithmeticAssemblyInstance =
+      std::regex_replace(arithmeticAssemblyInstance, replaceCloseLastDelimeter,
+                         "M=M+1\n", format_first_only);
+
+  if (arithmeticType == "eq") {
+    arithmeticAssemblyInstance =
+        std::regex_replace(arithmeticAssemblyInstance, replaceOpenDelimeter, "",
+                           format_first_only);
+    arithmeticAssemblyInstance =
+        std::regex_replace(arithmeticAssemblyInstance, replaceCloseDelimeter,
+                           "", format_first_only);
+    arithmeticAssemblyInstance = std::regex_replace(
+        arithmeticAssemblyInstance, replaceUnused, "", format_first_only);
+    arithmeticAssemblyInstance = std::regex_replace(
+        arithmeticAssemblyInstance, replaceUnused, "", format_first_only);
+
+  } else if (arithmeticType == "gt") {
+    arithmeticAssemblyInstance = std::regex_replace(
+        arithmeticAssemblyInstance, replaceUnused, "", format_first_only);
+    arithmeticAssemblyInstance =
+        std::regex_replace(arithmeticAssemblyInstance, replaceOpenDelimeter, "",
+                           format_first_only);
+    arithmeticAssemblyInstance =
+        std::regex_replace(arithmeticAssemblyInstance, replaceCloseDelimeter,
+                           "", format_first_only);
+    arithmeticAssemblyInstance = std::regex_replace(
+        arithmeticAssemblyInstance, replaceUnused, "", format_first_only);
+
+  } else if (arithmeticType == "lt") {
+    arithmeticAssemblyInstance = std::regex_replace(
+        arithmeticAssemblyInstance, replaceUnused, "", format_first_only);
+    arithmeticAssemblyInstance = std::regex_replace(
+        arithmeticAssemblyInstance, replaceUnused, "", format_first_only);
+    arithmeticAssemblyInstance =
+        std::regex_replace(arithmeticAssemblyInstance, replaceOpenDelimeter, "",
+                           format_first_only);
+    arithmeticAssemblyInstance =
+        std::regex_replace(arithmeticAssemblyInstance, replaceCloseDelimeter,
+                           "", format_first_only);
+  }
+  arithmeticAssemblyInstance =
+      std::regex_replace(arithmeticAssemblyInstance, replaceFirstLabel,
+                         std::to_string(this->firstLabelCounter));
+  arithmeticAssemblyInstance =
+      std::regex_replace(arithmeticAssemblyInstance, replaceContinueLabel,
+                         std::to_string(this->continueLabelCounter));
+  this->firstLabelCounter++;
+  this->continueLabelCounter++;
+
+  if (true) {
+    ofstream log = ofstream("./log/CodeWritterLog.txt");
+    log << "CodeWritter:" << std::endl;
+    log << arithmeticAssemblyInstance << std::endl;
+    log.close();
+  }
+
+  return arithmeticAssemblyInstance;
+}
+string CodeWritter::_arithmeticAssemblyBinary(
+    string arithmeticType, string arithmeticAssemblyInstance) {
+
+  if (arithmeticType == "add" || arithmeticType == "sub" ||
+      arithmeticType == "or" || arithmeticType == "and")
+    return _arithmeticAssemblyBinaryNotBool(arithmeticType,
+                                            arithmeticAssemblyInstance);
+  return _arithmeticAssemblyBinaryBool(arithmeticType,
+                                       arithmeticAssemblyInstance);
+  return NULL;
+}
+
+string CodeWritter::newArithmeticAssembly(string arithmeticType) {
+  string arithmeticAssemblyInstance = this->arithmeticAssemblyTemplate;
+  std::regex replace = std::regex(R"(\#\#operation\#\#)");
+  if (arithmeticType == "not" || arithmeticType == "neg")
+    return _arithmeticAssemblyUnary(arithmeticType, arithmeticAssemblyInstance);
+  return _arithmeticAssemblyBinary(arithmeticType, arithmeticAssemblyInstance);
+
+  return arithmeticAssemblyInstance;
 }
 string CodeWritter::newWriteLabel(string label) {
   string writeLabelInstance = string(this->writeLabelTemplate);
@@ -601,10 +372,6 @@ string CodeWritter::newWriteIf(string label) {
   writeIfInstance = std::regex_replace(writeIfInstance, regexLabel, label);
   return writeIfInstance;
 }
-// string CodeWritter::cleanGpr() {
-//   return std::string("@13") + "\n" + "M=0" + "\n" + "@14" + "\n" + "M=0" +
-//          "\n" + "@15" + "\n" + "M=0" + "\n";
-// }
 
 string CodeWritter::getPushAssembly(string segment, int index, int var1) {
   return newPushAssembly(segment, index, var1);
@@ -628,43 +395,6 @@ string CodeWritter::getWriteGotoTemplate(string label) {
 string CodeWritter::getWriteIfTemplate(string label) {
   return this->newWriteIf(label);
 }
-/*
- *PUSH
- [
- @##index##
- D=A
- ]
- [
- @##index##
- D=A
- @13
- M=0
- (LOOP##labelCounter##)
- @13
- M=M-1
- D=D-1
- @LOOP##labelCounter##
- D;JGT
- @13
- D=M
- ]
- [
- @##m_s##
- [
- A=D+M
- D=M
- ]
- [
- D=D+M
- ]
- ]
- @0
- A=M
- M=D
- @0
- M=M+1
-
- * */
 void CodeWritter::setPushAssemblyTemplate(void) {
   this->pushAssemblyTemplate =
       std::string("[") + "\n" + std::string("@##index##") + "\n" + "D=A" +
@@ -679,32 +409,6 @@ void CodeWritter::setPushAssemblyTemplate(void) {
       "\n" +
       "@0" + "\n" + "A=M" + "\n" + "M=D" + "\n" + "@0" + "\n" + "M=M+1" + "\n";
 }
-/*
- * POP
- * @0
- * M=M-1
- * A=M
- * D=M
- * @##var1##
- * M=D
- * @##arg2##
- * D=A
- * @##arg1##
- * [
- * A=A+D
- * D=A
- * ]
- * [
- * D=D+M
- * ]
- * @##var2##
- * M=D
- * @##var1##
- * D=M
- * @##var2##
- * A=M
- * M=D
- * */
 void CodeWritter::setPopAssemblyTemplate(void) {
   this->popAssemblyTemplate =
       std::string("@0") + "\n" + "M=M-1" + "\n" + "A=M" + "\n" + "D=M" + "\n" +
@@ -714,214 +418,80 @@ void CodeWritter::setPopAssemblyTemplate(void) {
       "M=D" + "\n" + "@##var1##" + "\n" + "D=M" + "\n" + "@##var2##" + "\n" +
       "A=M" + "\n" + "M=D" + "\n";
 }
-/*ARITHMETIC
-  @0
-  A=M-1
-  D=M
-  @0
-  M=M-1
-  @13
-  M=D
-  [
-  @0
-  A=M-1
-  D=M
-  @0
-  M=M-1
-  ]
-  @13
-  [
-  D=D##operation##M
-  ]
- ** EQ
-  [
-  @FIRST
-  D;JEQ
-  @SECOND
-  D=0
-  @CONTINUE
-  0;JMP
-  (FIRST)
-  D=-1
-  @CONTINUE
-  0;JMP
-  (CONTINUE)
-  ]
- ** GT
-  [
-  @FIRST
-  D;JGT
-  @SECOND
-  D=0
-  @CONTINUE
-  0;JMP
-  (FIRST)
-  D=-1
-  @CONTINUE
-  0;JMP
-  (CONTINUE)
-  ]
-  [
-  @FIRST
-  D;JLT
-  @SECOND
-  D=0
-  @CONTINUE
-  0;JMP
-  (FIRST)
-  D=-1
-  @CONTINUE
-  0;JMP
-  (CONTINUE)
-  ]
- [
- D=##operation##D
- ]
- @0
- A=M
- M=D
- @0
- M=M+1
- * */
-
-// "@0"+"\n" "A=M-1"+"\n" "D=M"+"\n" "@0"+"\n" "M=M-1"+"\n" "@13"+"\n" "M=D"+"\n" "["+"\n" "@0"+"\n" "A=M-1"+"\n" "D=M"+"\n" "@0"+"\n" "M=M-1"+"\n" "]"+"\n" "@13"+"\n" "["+"\n" "D=D##operation##M"+"\n" "]"+"\n" "["+"\n" "D=##operation##D"+"\n" "]"+"\n" "@0"+"\n" "A=M"+"\n" "M=D"+"\n" "@0"+"\n" "M=M+1"+"\n";
 void CodeWritter::setArithmeticAssemblyTemplate(void) {
-  // this->arithmeticAssemblyTemplate =
-  //     std::string("@0") + "\n" + "A=M-1" + "\n" + "M=0" + "\n" + "D=A" + "\n"
-  //     + "D=D-1" + "\n" + "@16" + "\n" + "A=D" + "\n" + "M=0" + "\n" + "@0" +
-  //     "\n" + "M=M-1" + "\n" + "@0" + "\n" + "M=M-1" + "\n";
-  // this->arithmeticAssemblyTemplate = std::string("@0") + "\n" + "M=M-1" + "\n" +
-  //                                    "[" + "\n" + "@0" + "\n" + "M=M-1" + "\n" +
-  //                                    "]";
-  // I need to do search and replace in the operation
-  // this->arithmeticAssemblyTemplate =
-  //     std::string("[") + "\n" + "@0" + "\n" + "A=M-1" + "\n" + "" + "D=M" +
-  //     "\n" + "@0" + "\n" + "M=M-1" + "\n" + "@13" + "\n" + "M=D" + "\n" + "@0" +
-  //     "\n" + "A=M-1" + "\n" + "D=M" + "\n" + "@0" + "\n" + "M=M-1" + "\n" +
-  //     "@13" + "\n" + "D=D+M" + "\n" + "@0" + "\n" + "M=D";
-  // for binary operations first
-  // this->arithmeticAssemblyTemplate =
-  //     std::string("\n") + "@0" + "\n" + "A=M-1" + "\n" + "" + "D=M" + "\n" +
-  //     "@0" + "\n" + "M=M-1" + "\n" + "@13" + "\n" + "M=D" + "\n" + "@0" + "\n" +
-  //     "A=M-1" + "\n" + "D=M" + "\n" + "@0" + "\n" + "M=M-1" + "\n" + "@13" +
-  //     "\n" + "D=D+M" + "\n" + "@0" + "\n" +"A=M"+ "\n"+ "M=D" +"\n"+"@0" +"\n"+ "M=M+1" ;
-
-  this->arithmeticAssemblyTemplate = std::string("@0") + "\n" + "A=M-1" +
-                                     "\n"
-                                     "D=M" +
-                                     "\n"
-                                     "@0" +
-                                     "\n"
-                                     "M=M-1" +
-                                     "\n"
-                                     "@13" +
-                                     "\n"
-                                     "M=D" +
-                                     "\n" + "[" +
-                                     "\n"
-                                     "@0" +
-                                     "\n"
-                                     "A=M-1" +
-                                     "\n"
-                                     "D=M" +
-                                     "\n"
-                                     "@0" +
-                                     "\n"
-                                     "M=M-1" +
-                                     "\n"
-                                     "]" +
-                                     "\n"
-                                     "@13" +
-                                     "\n"
-                                     "[" +
-                                     "\n"
-                                     "D=D##operation##M" +
-                                     "\n"
-                                     "]" +
-                                     "\n"
-                                     "[" +
-                                     "\n"
-                                     "@FIRST##firstLabelCounter##" +
-                                     "\n"
-                                     "D;JEQ" +
-                                     "\n"
-                                     "D=0" +
-                                     "\n"
-                                     "@CONTINUE##continueLabelCounter##" +
-                                     "\n"
-                                     "0;JMP" +
-                                     "\n"
-                                     "(FIRST##firstLabelCounter##)" +
-                                     "\n"
-                                     "D=-1" +
-                                     "\n"
-                                     "@CONTINUE##continueLabelCounter##" +
-                                     "\n"
-                                     "0;JMP" +
-                                     "\n"
-                                     "]" +
-                                     "\n"
-                                     "[" +
-                                     "\n"
-                                     "@FIRST##firstLabelCounter##" +
-                                     "\n"
-                                     "D;JGT" +
-                                     "\n"
-                                     "D=0" +
-                                     "\n"
-                                     "@CONTINUE##continueLabelCounter##" +
-                                     "\n"
-                                     "0;JMP" +
-                                     "\n"
-                                     "(FIRST##firstLabelCounter##)" +
-                                     "\n"
-                                     "D=-1" +
-                                     "\n"
-                                     "@CONTINUE##continueLabelCounter##" +
-                                     "\n"
-                                     "0;JMP" +
-                                     "\n"
-                                     "]" +
-                                     "\n"
-                                     "[" +
-                                     "\n"
-                                     "@FIRST##firstLabelCounter##" +
-                                     "\n"
-                                     "D;JLT" +
-                                     "\n"
-                                     "D=0" +
-                                     "\n"
-                                     "@CONTINUE##continueLabelCounter##" +
-                                     "\n"
-                                     "0;JMP" +
-                                     "\n"
-                                     "(FIRST##firstLabelCounter##)" +
-                                     "\n"
-                                     "D=-1" +
-                                     "\n"
-                                     "@CONTINUE##continueLabelCounter##" +
-                                     "\n"
-                                     "0;JMP" +
-                                     "\n"
-                                     "]" +
-                                     "\n"
-                                     "[" +
-                                     "\n"
-                                     "D=##operation##D" +
-                                     "\n"
-                                     "]" +
-                                     "\n"
-                                     "(CONTINUE##continueLabelCounter##)"
-                                     "\n"
-                                     "@0" +
-                                     "\n"
-                                     "A=M" +
-                                     "\n"
-                                     "M=D" +
-                                     "\n"
-                                     "@0" +
-                                     "\n"
-                                     "M=M+1";
+  std::string unaryTemplate = R"(
+[
+@0
+M=M-1
+A=M
+M=##operation##M
+@0
+M=M+1
+]
+[
+@0
+M=M-1
+A=M
+D=M
+@0
+M=M-1
+A=M
+M=M##operation##D
+@0
+M=M+1
+]
+[
+@0
+M=M-1
+A=M
+D=M
+@0
+M=M-1
+A=M
+M=M-D
+D=M
+[
+@FIRST##firstLabelCounter##
+D;JEQ
+D=0
+@CONTINUE##continueLabelCounter##
+0;JMP
+(FIRST##firstLabelCounter##)
+D=-1
+@CONTINUE##continueLabelCounter##
+0;JMP
+]
+[
+@FIRST##firstLabelCounter##
+D;JGT
+D=0
+@CONTINUE##continueLabelCounter##
+0;JMP
+(FIRST##firstLabelCounter##)
+D=-1
+@CONTINUE##continueLabelCounter##
+0;JMP
+]
+[
+@FIRST##firstLabelCounter##
+D;JLT
+D=0
+@CONTINUE##continueLabelCounter##
+0;JMP
+(FIRST##firstLabelCounter##)
+D=-1
+@CONTINUE##continueLabelCounter##
+0;JMP
+]
+(CONTINUE##continueLabelCounter##)
+@0
+A=M
+M=D
+@0
+M=M+1
+]
+)";
+  this->arithmeticAssemblyTemplate = unaryTemplate;
 }
 void CodeWritter::setWriteLabelTemplate(void) {
   this->writeLabelTemplate = "(##LABEL##)";

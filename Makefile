@@ -45,7 +45,7 @@ LDLIBS := -Wl,--rpath=${build_dir}/${lib_dir}
 
 lib_objs := $(filter-out %Main.cpp.o,${lib_objs})
 
-library: ${build_dir}/${lib_dir}/${lib_name}	##		Making vm library for testing
+library: ${build_dir}/${lib_dir}/${lib_name} ${srcs_objs}	##		Making vm library for testing
 
 ${build_dir}/${lib_dir}/${lib_name}: ${lib_objs}
 	$(CXX) $(CLIBFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
@@ -54,12 +54,12 @@ ${build_dir}/${lib_dir}/%.cpp.o: ${src_dir}/%.cpp
 	mkdir -p ${@D}
 	$(CXX) $(CLIBFLAGS) -c $< -o $@
 
-	-include ./test.mk
+include ./test.mk
 
 clean: ##		Removing generated objects, dependencies and binaries
 	rm -rf ${build_dir}
 
-	-include ${deps}
+-include ${deps}
 
 help: ##		Help, showing all the possible targets and its functionalities
 	@grep -Pi "^.*\:.*\#\#" ${MAKEFILE_LIST} \
