@@ -9,6 +9,13 @@ using std::string;
 using std::regex_constants::format_first_only;
 class CodeWritter {
  private:
+  class PatternMgr {
+   public:
+    std::map<std::string, std::string> patternMap;
+    std::vector<std::string> patternInsertionTrack;
+    void addPattern(std::string pattern, std::string replacement);
+    // string getTransformedTemplate(std::string assemblyTemplate, bool firstOnly);
+  };
   string pushAssemblyTemplate;
   string popAssemblyTemplate;
   string arithmeticAssemblyTemplate;
@@ -32,8 +39,8 @@ class CodeWritter {
   string newPopAssembly(string mememorySegment, int memorySegmentIndex,
                         int var1, int var2);
   string newArithmeticAssembly(string arithmeticType);
-  string transformTemplate(std::map<std::string, std::string>& patternMatchMap,
-                           string assemblyTemplate);
+  string transformTemplate(PatternMgr& patternMgr, string assemblyTemplate,
+                           bool firstOnly);
 
   // Adding branching
   string newWriteLabel(string label);
@@ -54,5 +61,6 @@ class CodeWritter {
   string getWriteLabelTemplate(string label);
   string getWriteGotoTemplate(string label);
   string getWriteIfTemplate(string label);
+  string getTemplate(string filepath);
 };
 #endif

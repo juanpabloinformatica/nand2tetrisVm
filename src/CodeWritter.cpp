@@ -1,5 +1,6 @@
 #include "CodeWritter.hpp"
 #include <iostream>
+#include <string>
 #include "Utilities.hpp"
 
 CodeWritter::CodeWritter() {
@@ -13,6 +14,11 @@ CodeWritter::CodeWritter() {
   this->labelCounter = 0;
   this->firstLabelCounter = 0;
   this->continueLabelCounter = 0;
+}
+void CodeWritter::PatternMgr::addPattern(std::string pattern,
+                                         std::string replacement) {
+  this->patternMap[pattern] = replacement;
+  this->patternInsertionTrack.push_back(pattern);
 }
 string CodeWritter::newPushAssembly(string memorySegment,
                                     int memorySegmentIndex, int var1) {
@@ -141,87 +147,52 @@ string CodeWritter::newPushAssembly(string memorySegment,
 string CodeWritter ::newPopAssembly(string memorySegment,
                                     int memorySegmentIndex, int var1,
                                     int var2) {
-
-  std::regex arg1Regex = std::regex(R"(\#\#arg1\#\#)");
-  std::regex arg2Regex = std::regex(R"(\#\#arg2\#\#)");
-  std::regex var1Regex = std::regex(R"(\#\#var1\#\#)");
-  std::regex var2Regex = std::regex(R"(\#\#var2\#\#)");
   string popAssemblyInstance = string(this->popAssemblyTemplate);
-  popAssemblyInstance = std::regex_replace(
-      popAssemblyInstance, arg1Regex,
+  PatternMgr patternMgr = PatternMgr();
+  patternMgr.addPattern(
+      R"(\#\#arg1\#\#)",
       std::to_string(Utility::memorySegmentMap[memorySegment]));
-  popAssemblyInstance = std::regex_replace(popAssemblyInstance, arg2Regex,
-                                           std::to_string(memorySegmentIndex));
+  patternMgr.addPattern(R"(\#\#arg2\#\#)", std::to_string(memorySegmentIndex));
+  patternMgr.addPattern(R"(\#\#var1\#\#)", std::to_string(var1));
+  patternMgr.addPattern(R"(\#\#var2\#\#)", std::to_string(var2));
   popAssemblyInstance =
-      std::regex_replace(popAssemblyInstance, var1Regex, std::to_string(var1));
-  popAssemblyInstance =
-      std::regex_replace(popAssemblyInstance, var2Regex, std::to_string(var2));
-
+      this->transformTemplate(patternMgr, popAssemblyInstance, false);
   if (memorySegment == "pointer" || memorySegment == "temp" ||
       memorySegment == "static") {
-    std::cout << "IN:  POINTER | TEMP | STATIC " << std::endl;
-
-    // this case i send that weird value
-    // that I will change eventually
-    // so impotant thing here will be
-    // I sent the value when is pointer or temp or static
-    // so in those cases I don't need to do D=D+M but D=A+D
-
-    std::regex openDelimeter = std::regex(R"(\n\[)");
+    patternMgr.addPattern(R"(\n\[)", "");
+    patternMgr.addPattern(R"(\n\])", "");
+    patternMgr.addPattern(R"(\[\nD=D\+M\n\]\n)", "");
     popAssemblyInstance =
-        std::regex_replace(popAssemblyInstance, openDelimeter, "",
-                           std::regex_constants::format_first_only);
-    std::regex closeDelimeter = std::regex(R"(\n\])");
-    popAssemblyInstance =
-        std::regex_replace(popAssemblyInstance, closeDelimeter, "",
-                           std::regex_constants::format_first_only);
-    std::regex dynamicRegex = std::regex(R"(\[\nD=D\+M\n\])");
-    popAssemblyInstance =
-        std::regex_replace(popAssemblyInstance, dynamicRegex, "",
-                           std::regex_constants::format_first_only);
-
-    // std::cout << popAssemblyInstance << std::endl;
-
-  } else {
-    std::cout << "IN NOT:  POINTER | TEMP | STATIC " << std::endl;
-    std::regex dynamicRegex = std::regex(R"(\n\[\nA=D\+A\nD=A\n\])");
-    popAssemblyInstance =
-        std::regex_replace(popAssemblyInstance, dynamicRegex, "",
-                           std::regex_constants::format_first_only);
-    std::regex openDelimeter = std::regex(R"(\n\[)");
-    popAssemblyInstance =
-        std::regex_replace(popAssemblyInstance, openDelimeter, "",
-                           std::regex_constants::format_first_only);
-    std::regex closeDelimeter = std::regex(R"(\n\])");
-    popAssemblyInstance =
-        std::regex_replace(popAssemblyInstance, closeDelimeter, "",
-                           std::regex_constants::format_first_only);
-    // std::cout << popAssemblyInstance << std::endl;
+        this->transformTemplate(patternMgr, popAssemblyInstance, true);
+    return popAssemblyInstance;
   }
-
-  // std::cout << "Checking search and replace with regex" << std::endl
-  //           << popAssemblyInstance << std::endl;
-
+  patternMgr.addPattern(R"(\n\[\nA=D\+A\nD=A\n\])", "");
+  patternMgr.addPattern(R"(\n\[)", "");
+  patternMgr.addPattern(R"(\n\])", "");
+  popAssemblyInstance =
+      this->transformTemplate(patternMgr, popAssemblyInstance, true);
   return popAssemblyInstance;
 }
 string CodeWritter::_arithmeticAssemblyUnary(
     string arithmeticType, string arithmeticAssemblyInstance) {
-  std::map<std::string, std::string> test =
-      std::map<std::string, std::string>();
-  test[R"(\n\[)"] = "";
-  test[R"(\n\])"] = "";
-  test[R"(\#\#operation\#\#)"] = arithmeticType == "not" ? "!" : "-";
-  test[R"(\n\])"] = "";
-  test[R"(\n\[(.|\n)*\])"] = "";
-  return this->transformTemplate(test, arithmeticAssemblyInstance);
+  PatternMgr patternMgr = PatternMgr();
+  patternMgr.addPattern(R"(\n\[)", "");
+  patternMgr.addPattern(R"(\n\])", "");
+  patternMgr.addPattern(R"(\#\#operation\#\#)",
+                        arithmeticType == "not" ? "!" : "-");
+  patternMgr.addPattern(R"(\n\])", "");
+  patternMgr.addPattern(R"(\n\[(.|\n)*\])", "");
+  return this->transformTemplate(patternMgr, arithmeticAssemblyInstance, true);
 }
-string CodeWritter::transformTemplate(
-    std::map<std::string, std::string>& patternMatchMap,
-    string assemblyTemplate) {
-  for (auto element : patternMatchMap) {
+string CodeWritter::transformTemplate(PatternMgr& patternMgr,
+                                      string assemblyTemplate, bool firstOnly) {
+  for (auto element : patternMgr.patternInsertionTrack) {
     assemblyTemplate =
-        std::regex_replace(assemblyTemplate, std::regex(element.first),
-                           element.second, format_first_only);
+        firstOnly ? std::regex_replace(assemblyTemplate, std::regex(element),
+                                       patternMgr.patternMap[element],
+                                       format_first_only)
+                  : std::regex_replace(assemblyTemplate, std::regex(element),
+                                       patternMgr.patternMap[element]);
   }
   return assemblyTemplate;
 }
@@ -373,6 +344,26 @@ string CodeWritter::newWriteIf(string label) {
   return writeIfInstance;
 }
 
+string CodeWritter::getTemplate(string filename) {
+  std::filesystem::path cwd = std::filesystem::current_path();
+  std::filesystem::path filepath =
+      cwd.string() + "/" + "templates" + "/" + filename;
+  if (!std::filesystem::exists(filepath.string()))
+    return "";
+
+  string result = std::string();
+  string currentLine;
+  std::ifstream file = std::ifstream(filepath);
+
+  while (std::getline(file, currentLine)) {
+    result += currentLine;
+    result += "\n";
+  }
+  result.pop_back();
+  file.close();
+  return result;
+}
+
 string CodeWritter::getPushAssembly(string segment, int index, int var1) {
   return newPushAssembly(segment, index, var1);
 }
@@ -396,110 +387,23 @@ string CodeWritter::getWriteIfTemplate(string label) {
   return this->newWriteIf(label);
 }
 void CodeWritter::setPushAssemblyTemplate(void) {
-  this->pushAssemblyTemplate =
-      std::string("[") + "\n" + std::string("@##index##") + "\n" + "D=A" +
-      "\n" + "]" + "\n" + "[" + "\n" + "@##index##" + "\n" + +"D=A" + "\n" +
-      +"@13" + "\n" + "M=0" + "\n" + "(LOOP##labelCounter##)" + "\n" + "@13" +
-      "\n" + "M=M-1" + "\n" + "D=D-1" + "\n" + "@LOOP##labelCounter##" + "\n" +
-      "D;JGT" + "\n" + "@13" + "\n" + "D=M" + "\n" + "]" + "\n" + "[" + "\n" +
-      "@##m_s##" + "\n" + "[" + "\n" + "A=D+M" + "\n" + "D=M" + "\n" + "]" +
-      "\n" + "[" + "\n" + "D=D+M" + "\n" + "]" +
-      "\n"
-      "]"
-      "\n" +
-      "@0" + "\n" + "A=M" + "\n" + "M=D" + "\n" + "@0" + "\n" + "M=M+1" + "\n";
+
+  this->pushAssemblyTemplate = this->getTemplate("pushAssembly.txt");
 }
 void CodeWritter::setPopAssemblyTemplate(void) {
-  this->popAssemblyTemplate =
-      std::string("@0") + "\n" + "M=M-1" + "\n" + "A=M" + "\n" + "D=M" + "\n" +
-      "@##var1##" + "\n" + "M=D" + "\n" + "@##arg2##" + "\n" + "D=A" + "\n" +
-      "@##arg1##" + "\n" + "[" + "\n" + "A=D+A" + "\n" + "D=A" + "\n" + "]" +
-      "\n" + "[" + "\n" + "D=D+M" + "\n" + "]" + "\n" + "@##var2##" + "\n" +
-      "M=D" + "\n" + "@##var1##" + "\n" + "D=M" + "\n" + "@##var2##" + "\n" +
-      "A=M" + "\n" + "M=D" + "\n";
+  this->popAssemblyTemplate = this->getTemplate("popAssembly.txt");
 }
+
 void CodeWritter::setArithmeticAssemblyTemplate(void) {
-  std::string unaryTemplate = R"(
-[
-@0
-M=M-1
-A=M
-M=##operation##M
-@0
-M=M+1
-]
-[
-@0
-M=M-1
-A=M
-D=M
-@0
-M=M-1
-A=M
-M=M##operation##D
-@0
-M=M+1
-]
-[
-@0
-M=M-1
-A=M
-D=M
-@0
-M=M-1
-A=M
-M=M-D
-D=M
-[
-@FIRST##firstLabelCounter##
-D;JEQ
-D=0
-@CONTINUE##continueLabelCounter##
-0;JMP
-(FIRST##firstLabelCounter##)
-D=-1
-@CONTINUE##continueLabelCounter##
-0;JMP
-]
-[
-@FIRST##firstLabelCounter##
-D;JGT
-D=0
-@CONTINUE##continueLabelCounter##
-0;JMP
-(FIRST##firstLabelCounter##)
-D=-1
-@CONTINUE##continueLabelCounter##
-0;JMP
-]
-[
-@FIRST##firstLabelCounter##
-D;JLT
-D=0
-@CONTINUE##continueLabelCounter##
-0;JMP
-(FIRST##firstLabelCounter##)
-D=-1
-@CONTINUE##continueLabelCounter##
-0;JMP
-]
-(CONTINUE##continueLabelCounter##)
-@0
-A=M
-M=D
-@0
-M=M+1
-]
-)";
-  this->arithmeticAssemblyTemplate = unaryTemplate;
-}
-void CodeWritter::setWriteLabelTemplate(void) {
-  this->writeLabelTemplate = "(##LABEL##)";
+  this->arithmeticAssemblyTemplate =
+      this->getTemplate("arithmeticAssembly.txt");
 }
 void CodeWritter::setWriteGotoTemplate(void) {
-  this->writeGotoTemplate = std::string("@##LABEL##") + "\n" + "0;JMP";
+  this->writeGotoTemplate = this->getTemplate("writeGoto.txt");
 }
 void CodeWritter::setWriteIfTemplate(void) {
-  this->writeIfTemplate = std::string("@0") + "\n" + "M=M-1" + "\n" + "A=M" +
-                          "\n" + "D=M" + "\n" + "@##LABEL##" + "\n" + "D;JGT";
+  this->writeIfTemplate = this->getTemplate("writeIf.txt");
+}
+void CodeWritter::setWriteLabelTemplate(void) {
+  this->writeLabelTemplate = this->getTemplate("writeLabel.txt");
 }

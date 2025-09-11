@@ -177,7 +177,52 @@ M=M+1
   ASSERT_STREQ(resultLTTemplate.c_str(),
                this->cw.getArithmeticAssembly("lt").c_str());
 }
-// TEST_F(TestCodeWritter, HandleGetPopAssembly) {}
+TEST_F(TestCodeWritter, HandleGetPopAssembly) {
+  std::string resultLocalPopAssembly = R"(
+@0
+M=M-1
+A=M
+D=M
+@13
+M=D
+@1
+D=A
+@1
+D=D+M
+@14
+M=D
+@13
+D=M
+@14
+A=M
+M=D
+)";
+  ASSERT_STREQ(resultLocalPopAssembly.c_str(),
+               this->cw.getPopAssembly("local", 1, 13, 14).c_str());
+
+  std::string resultPointerPopAssembly = R"(
+@0
+M=M-1
+A=M
+D=M
+@13
+M=D
+@1
+D=A
+@3
+A=D+A
+D=A
+@14
+M=D
+@13
+D=M
+@14
+A=M
+M=D
+)";
+  ASSERT_STREQ(resultPointerPopAssembly.c_str(),
+               this->cw.getPopAssembly("pointer", 1, 13, 14).c_str());
+}
 // TEST_F(TestCodeWritter, HandleGetArithmeticAssembly) {}
 // TEST_F(TestCodeWritter, HandleGetWriteLabelTemplate) {}
 // TEST_F(TestCodeWritter, HandleGetWriteGotoTemplate) {}
