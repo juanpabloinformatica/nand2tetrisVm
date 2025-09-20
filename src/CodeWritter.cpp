@@ -11,6 +11,8 @@ CodeWritter::CodeWritter() {
   this->setWriteLabelTemplate();
   this->setWriteGotoTemplate();
   this->setWriteIfTemplate();
+  this->setWriteCallTemplate();
+
   this->labelCounter = 0;
   this->firstLabelCounter = 0;
   this->continueLabelCounter = 0;
@@ -343,6 +345,19 @@ string CodeWritter::newWriteIf(string label) {
   writeIfInstance = std::regex_replace(writeIfInstance, regexLabel, label);
   return writeIfInstance;
 }
+string CodeWritter::newWriteCall(int currentCommandLineNumber, string nArgs,
+                                 string functionName) {
+  string writeCallInstance = string(this->writeCallTemplate);
+  PatternMgr patternMgr = PatternMgr();
+  patternMgr.addPattern(R"(\#\#currentCommandLineNumberPlusOne\#\#)",
+                        std::to_string(currentCommandLineNumber));
+  patternMgr.addPattern(R"(\#\#nArgs\#\#)", nArgs);
+  patternMgr.addPattern(R"(\#\#functionName\#\#)", functionName);
+  writeCallInstance =
+      this->transformTemplate(patternMgr, writeCallInstance, false);
+
+  return writeCallInstance;
+}
 
 string CodeWritter::getTemplate(string filename) {
   std::filesystem::path cwd = std::filesystem::current_path();
@@ -386,6 +401,12 @@ string CodeWritter::getWriteGotoTemplate(string label) {
 string CodeWritter::getWriteIfTemplate(string label) {
   return this->newWriteIf(label);
 }
+string CodeWritter::getWriteCallTemplate(int currentCommandLineNumber,
+                                         string nArgs, string functionName) {
+  return this->newWriteCall(currentCommandLineNumber, nArgs, functionName);
+
+  return NULL;
+}
 void CodeWritter::setPushAssemblyTemplate(void) {
 
   this->pushAssemblyTemplate = this->getTemplate("pushAssembly.txt");
@@ -406,4 +427,7 @@ void CodeWritter::setWriteIfTemplate(void) {
 }
 void CodeWritter::setWriteLabelTemplate(void) {
   this->writeLabelTemplate = this->getTemplate("writeLabel.txt");
+}
+void CodeWritter::setWriteCallTemplate(void) {
+  this->writeCallTemplate = this->getTemplate("writeCall.txt");
 }
