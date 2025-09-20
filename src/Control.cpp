@@ -155,8 +155,6 @@ void Control::traverseFile() {
               << this->codeWritter.getWriteGotoTemplate(this->parser.getArg1())
               << endl;
           cout << "________________" << endl;
-          // this->getWriteFile () << "Stack\n"
-          //<< this->memoryManager.showStack2 () << endl;
           break;
         case C_IF:
           cout << currentCommand << endl;
@@ -173,15 +171,28 @@ void Control::traverseFile() {
           //<< this->memoryManager.showStack2 () << endl;
           break;
         case C_FUNCTION:
+          //this will updated and gott the name from the function
+          this->actualFunction = this->parser.getArg1();
           break;
         case C_RETURN:
           break;
         case C_CALL:
+          cout << currentCommand << endl;
+          this->getWriteFile() << "//" << currentCommand << endl;
+          cout << "________________" << endl;
+          cout << this->parser.getArg1() << endl;
+          this->getWriteFile() << this->codeWritter.getWriteCallTemplate(
+                                      this->currentCommandLineNumber,
+                                      std::to_string(this->parser.getArg2()),
+                                      this->actualFunction)
+                               << endl;
+          cout << "________________" << endl;
           break;
         default:
           break;
       }
     }
+    this->currentCommandLineNumber++;
   }
 }
 
