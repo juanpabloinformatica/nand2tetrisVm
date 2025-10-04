@@ -1,15 +1,17 @@
 #include "TestCodeWritter.hpp"
-#include <string>
+
 #include "CodeWritter.hpp"
 #include "gtest/gtest.h"
 
+#include <string>
+
 void TestCodeWritter::SetUp() {
-  this->cw = CodeWritter();
+    this->cw = CodeWritter();
 }
 
 TEST_F(TestCodeWritter, HandleGetArithmeticAssemblyUnary) {
-  /*Case not || neg*/
-  string resultNotTemplate = R"(
+    /*Case not || neg*/
+    string resultNotTemplate = R"(
 @0
 M=M-1
 A=M
@@ -17,9 +19,8 @@ M=!M
 @0
 M=M+1
 )";
-  ASSERT_STREQ(resultNotTemplate.c_str(),
-               this->cw.getArithmeticAssembly("not").c_str());
-  string resultNegTemplate = R"(
+    ASSERT_STREQ(resultNotTemplate.c_str(), this->cw.getArithmeticAssembly("not").c_str());
+    string resultNegTemplate = R"(
 @0
 M=M-1
 A=M
@@ -27,13 +28,12 @@ M=-M
 @0
 M=M+1
 )";
-  ASSERT_STREQ(resultNegTemplate.c_str(),
-               this->cw.getArithmeticAssembly("neg").c_str());
+    ASSERT_STREQ(resultNegTemplate.c_str(), this->cw.getArithmeticAssembly("neg").c_str());
 }
 
 TEST_F(TestCodeWritter, HandleGetArithmeticAssemblyBinaryNotBool) {
-  /*Case not || neg*/
-  string resultAddTemplate = R"(
+    /*Case not || neg*/
+    string resultAddTemplate = R"(
 @0
 M=M-1
 A=M
@@ -45,9 +45,8 @@ M=M+D
 @0
 M=M+1
 )";
-  ASSERT_STREQ(resultAddTemplate.c_str(),
-               this->cw.getArithmeticAssembly("add").c_str());
-  string resultSubTemplate = R"(
+    ASSERT_STREQ(resultAddTemplate.c_str(), this->cw.getArithmeticAssembly("add").c_str());
+    string resultSubTemplate = R"(
 @0
 M=M-1
 A=M
@@ -59,9 +58,8 @@ M=M-D
 @0
 M=M+1
 )";
-  ASSERT_STREQ(resultSubTemplate.c_str(),
-               this->cw.getArithmeticAssembly("sub").c_str());
-  string resultAndTemplate = R"(
+    ASSERT_STREQ(resultSubTemplate.c_str(), this->cw.getArithmeticAssembly("sub").c_str());
+    string resultAndTemplate = R"(
 @0
 M=M-1
 A=M
@@ -73,9 +71,8 @@ M=M&D
 @0
 M=M+1
 )";
-  ASSERT_STREQ(resultAndTemplate.c_str(),
-               this->cw.getArithmeticAssembly("and").c_str());
-  string resultOrTemplate = R"(
+    ASSERT_STREQ(resultAndTemplate.c_str(), this->cw.getArithmeticAssembly("and").c_str());
+    string resultOrTemplate = R"(
 @0
 M=M-1
 A=M
@@ -87,12 +84,12 @@ M=M|D
 @0
 M=M+1
 )";
-  ASSERT_STREQ(resultOrTemplate.c_str(),
-               this->cw.getArithmeticAssembly("or").c_str());
+    ASSERT_STREQ(resultOrTemplate.c_str(), this->cw.getArithmeticAssembly("or").c_str());
 }
+
 TEST_F(TestCodeWritter, HandleGetArithmeticAssemblyBinaryBool) {
-  /*Case not || neg*/
-  string resultEqTemplate = R"(
+    /*Case not || neg*/
+    string resultEqTemplate = R"(
 @0
 M=M-1
 A=M
@@ -118,9 +115,8 @@ M=D
 @0
 M=M+1
 )";
-  ASSERT_STREQ(resultEqTemplate.c_str(),
-               this->cw.getArithmeticAssembly("eq").c_str());
-  string resultGTTemplate = R"(
+    ASSERT_STREQ(resultEqTemplate.c_str(), this->cw.getArithmeticAssembly("eq").c_str());
+    string resultGTTemplate = R"(
 @0
 M=M-1
 A=M
@@ -146,9 +142,8 @@ M=D
 @0
 M=M+1
 )";
-  ASSERT_STREQ(resultGTTemplate.c_str(),
-               this->cw.getArithmeticAssembly("gt").c_str());
-  string resultLTTemplate = R"(
+    ASSERT_STREQ(resultGTTemplate.c_str(), this->cw.getArithmeticAssembly("gt").c_str());
+    string resultLTTemplate = R"(
 @0
 M=M-1
 A=M
@@ -174,11 +169,11 @@ M=D
 @0
 M=M+1
 )";
-  ASSERT_STREQ(resultLTTemplate.c_str(),
-               this->cw.getArithmeticAssembly("lt").c_str());
+    ASSERT_STREQ(resultLTTemplate.c_str(), this->cw.getArithmeticAssembly("lt").c_str());
 }
+
 TEST_F(TestCodeWritter, HandleGetPopAssembly) {
-  std::string resultLocalPopAssembly = R"(
+    std::string resultLocalPopAssembly = R"(
 @0
 M=M-1
 A=M
@@ -197,10 +192,9 @@ D=M
 A=M
 M=D
 )";
-  ASSERT_STREQ(resultLocalPopAssembly.c_str(),
-               this->cw.getPopAssembly("local", 1, 13, 14).c_str());
+    ASSERT_STREQ(resultLocalPopAssembly.c_str(), this->cw.getPopAssembly("local", 1, 13, 14).c_str());
 
-  std::string resultPointerPopAssembly = R"(
+    std::string resultPointerPopAssembly = R"(
 @0
 M=M-1
 A=M
@@ -220,9 +214,9 @@ D=M
 A=M
 M=D
 )";
-  ASSERT_STREQ(resultPointerPopAssembly.c_str(),
-               this->cw.getPopAssembly("pointer", 1, 13, 14).c_str());
+    ASSERT_STREQ(resultPointerPopAssembly.c_str(), this->cw.getPopAssembly("pointer", 1, 13, 14).c_str());
 }
+
 // TEST_F(TestCodeWritter, HandleGetArithmeticAssembly) {}
 // TEST_F(TestCodeWritter, HandleGetWriteLabelTemplate) {}
 // TEST_F(TestCodeWritter, HandleGetWriteGotoTemplate) {}
