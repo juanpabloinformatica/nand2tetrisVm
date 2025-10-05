@@ -28,6 +28,7 @@ class Control {
     void          filepathHandler(string & filepath);
     void          fileHandler(const string & filepath);
     void          directoryHandler(const string & filepath);
+    void          setBoostrapToWriteFile(void);
 
   public:
     Control(string filepath);

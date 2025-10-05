@@ -28,6 +28,7 @@ class CodeWritter {
     string writeCallTemplate;
     string writeReturnTemplate;
     string writeFunctionTemplate;
+    string writeInitTemplate;
     // should this variable be part of the control and
     // passed as args?? I think yeah
     int    labelCounter;
@@ -53,6 +54,8 @@ class CodeWritter {
     // string newWriteReturn();
     // string newWriteInit();
 
+    string newWriteInitAssembly(void);
+
   public:
     CodeWritter();
     void   setPushAssemblyTemplate(void);
@@ -62,6 +65,7 @@ class CodeWritter {
     void   setWriteGotoTemplate(void);
     void   setWriteIfTemplate(void);
     void   setWriteCallTemplate(void);
+    void   setWriteInitTemplate(void);
     string getPushAssembly(string segment, int index, int var1);
     string getPopAssembly(string segment, int index, int var1, int var2);
     string getArithmeticAssembly(string arithmeticType);
@@ -69,6 +73,7 @@ class CodeWritter {
     string getWriteGotoTemplate(string label);
     string getWriteIfTemplate(string label);
     string getWriteCallTemplate(int currentCommandLineNumber, string nArgs, string functionName);
+    string getWriteInitAssembly(void);
     string getTemplate(string filepath);
 };
 #endif
