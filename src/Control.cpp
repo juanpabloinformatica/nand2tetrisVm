@@ -5,23 +5,12 @@
 #include <iostream>
 
 Control::Control(string filepath) {
-    // if (filepath != "") {
-    //   // this->setReadFile(filepath);
-    //   // int indexDelimeter = filepath.find(".");
-    //   // string writeFilePath = filepath.substr(0, indexDelimeter) + ".asm";
-    //   // this->setWriteFile(writeFilePath);
-    //
-    // } else {
-    //   cout << "FILEPATH MUST BE NOT NULL" << endl;
-    //   exit(1);
-    // }
     this->parser                   = Parser();
     this->memoryManager            = MemoryManager();
     this->codeWritter              = CodeWritter();
     this->currentCommandLineNumber = 0;
     this->functionReturnCounter    = 0;
     this->actualFunction           = "";
-    // this->filepathHandler(filepath);
 }
 
 void Control::start_control(string & filepath) {
@@ -40,7 +29,6 @@ void Control::filepathHandler(string & filepath) {
     string writeFilePath;
     int    delimeterIndex;
     delimeterIndex = (isFile == true) ? filepath.find(".") : filepath.length() - 1;
-
     writeFilePath = filepath.substr(0, delimeterIndex) + ".asm";
     this->setWriteFile(writeFilePath);
 
@@ -92,27 +80,13 @@ void Control::traverseFile() {
                     this->getWriteFile() << endl;
                     resultPop = this->memoryManager.popStack(this->parser.getArg1());
                     this->memoryManager.updateStackMemory(resultPop);
-                    // this->getWriteFile()
-                    //     << "// Finally pushing the result of the arithmetic operation\n"
-                    //     << endl;
-                    // this->getWriteFile()
-                    //     << this->codeWritter.getPushAssembly("constant", resultPop, 13);
-                    // if (this->parser.getArg1() != "not" ||
-                    //     this->parser.getArg1() != "neg") {
-                    //   std::cout << "Popped twice" << std::endl;
-                    // } else {
-                    //   std::cout << "Popped once" << std::endl;
-                    // }
                     this->memoryManager.showStack();
-                    // this->getWriteFile () << "Stack\n"
-                    //<< this->memoryManager.showStack2 () << endl;
                     break;
                 case C_PUSH:
                     cout << currentCommand << endl;
                     int valueToPush;
                     if (this->parser.getArg1() == "constant") {
                         valueToPush = this->parser.getArg2();
-                        // this->memoryManager.updateStackMemory(valueToPush);
                     } else if (this->parser.getArg1() == "local") {
                         valueToPush = this->memoryManager.getMSLocal(this->parser.getArg2());
                     } else if (this->parser.getArg1() == "argument") {
@@ -139,8 +113,6 @@ void Control::traverseFile() {
                                          << endl;
                     std::cout << "Pushing Once" << std::endl;
                     this->memoryManager.showStack();
-                    // this->getWriteFile () << "Stack\n"
-                    //<< this->memoryManager.showStack2 () << endl;
                     break;
                 case C_POP:
                     cout << currentCommand << endl;
@@ -168,10 +140,7 @@ void Control::traverseFile() {
                                                                              this->parser.getArg2(), 13, 14)
                                          << endl;
 
-                    // this->memoryManager.popStack();
                     this->memoryManager.showStack();
-                    // this->getWriteFile () << "Stack\n"
-                    //<< this->memoryManager.showStack2 () << endl;
                     break;
                 case C_LABEL:
                     cout << currentCommand << endl;
@@ -180,10 +149,6 @@ void Control::traverseFile() {
                     cout << this->parser.getArg1() << endl;
                     this->getWriteFile() << this->codeWritter.getWriteLabelTemplate(this->parser.getArg1()) << endl;
                     cout << "________________" << endl;
-                    // this->getWriteFile () << "Stack\n"
-                    //<< this->memoryManager.showStack2 () << endl;
-                    // this->getWriteFile () << "Stack\n"
-                    //<< this->memoryManager.showStack2 () << endl;
                     break;
                 case C_GOTO:
                     cout << currentCommand << endl;
@@ -195,15 +160,12 @@ void Control::traverseFile() {
                     break;
                 case C_IF:
                     cout << currentCommand << endl;
-                    // parser is working?????
                     this->getWriteFile() << "//" << currentCommand << endl;
                     cout << "________________" << endl;
                     this->memoryManager.popStack();
                     cout << this->parser.getArg1() << endl;
                     this->getWriteFile() << this->codeWritter.getWriteIfTemplate(this->parser.getArg1()) << endl;
                     cout << "________________" << endl;
-                    // this->getWriteFile () << "Stack\n"
-                    //<< this->memoryManager.showStack2 () << endl;
                     break;
                 case C_FUNCTION:
                     //this will updated and gott the name from the function

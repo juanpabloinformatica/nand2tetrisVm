@@ -21,7 +21,6 @@ class Control {
     Parser        parser;
     CodeWritter   codeWritter;
     MemoryManager memoryManager;
-    // I don't know if it is good to have this variables in this module
     int           currentCommandLineNumber;
     string        actualFunction;
     int           functionReturnCounter;

@@ -39,7 +39,6 @@ class MemoryManager {
         { "that",     4            },
         { "pointer",  pointerIndex },
         { "temp",     tempIndex    },
-        // {"constant", 5},
         { "static",   staticIndex  },
         { "constant", 874          }
     };
@@ -71,7 +70,6 @@ class MemoryManager {
     void          updateMSPointer(int index, int value);
     void          updateMSTemp(int index, int value);
     void          updateStackMemory(int value);
-    // if is not push is pop
     void          updateMemorySegmentMap(string _memorySegmentMap, bool isPush);
     int           popStack(string type = "null");
     int           getMSLocal(int index);

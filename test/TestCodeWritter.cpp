@@ -217,7 +217,3 @@ M=D
     ASSERT_STREQ(resultPointerPopAssembly.c_str(), this->cw.getPopAssembly("pointer", 1, 13, 14).c_str());
 }
 
-// TEST_F(TestCodeWritter, HandleGetArithmeticAssembly) {}
-// TEST_F(TestCodeWritter, HandleGetWriteLabelTemplate) {}
-// TEST_F(TestCodeWritter, HandleGetWriteGotoTemplate) {}
-// TEST_F(TestCodeWritter, HandleGetWriteIfTemplate) {}

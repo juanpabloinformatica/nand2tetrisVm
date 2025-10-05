@@ -9,7 +9,6 @@ CodeWritter::CodeWritter() {
     this->setPopAssemblyTemplate();
     this->setPushAssemblyTemplate();
     this->setArithmeticAssemblyTemplate();
-    // Adding init for branching
     this->setWriteLabelTemplate();
     this->setWriteGotoTemplate();
     this->setWriteIfTemplate();
@@ -48,7 +47,6 @@ string CodeWritter::newPushAssembly(string memorySegment, int memorySegmentIndex
             std::regex_replace(pushAssemblyInstance, regexDelimeter, "", std::regex_constants::format_first_only);
 
     } else {
-        // std::cout << pushAssemblyInstance << std::endl;
         std::regex var1Regex      = std::regex(R"(\#\#var1\#\#)");
         pushAssemblyInstance      = std::regex_replace(pushAssemblyInstance, var1Regex, std::to_string(var1));
         std::regex regexDelimeter = std::regex(R"(\[\n@##index##\nD=A\n\]\n)");
@@ -73,11 +71,9 @@ string CodeWritter::newPushAssembly(string memorySegment, int memorySegmentIndex
         pushAssemblyInstance =
             std::regex_replace(pushAssemblyInstance, labelCounterRegex, std::to_string(this->labelCounter));
         this->labelCounter++;
-        // std::cout << pushAssemblyInstance << std::endl;
     }
     if (memorySegment == "constant") {
         std::cout << "Entering in CONSTANT" << std::endl;
-        // std::cout << "here 2" << std::endl;
         std::regex regexDelimeter = std::regex(R"(\[(\n|.)*\]\n)");
         pushAssemblyInstance =
             std::regex_replace(pushAssemblyInstance, regexDelimeter, "", std::regex_constants::format_first_only);
@@ -94,7 +90,6 @@ string CodeWritter::newPushAssembly(string memorySegment, int memorySegmentIndex
             pushAssemblyInstance          = std::regex_replace(pushAssemblyInstance, regexOpenDelimeter, "",
                                                                std::regex_constants::format_first_only);
             std::regex cleanRegex         = std::regex(R"(M\n\]\n\]\n)");
-            // std::regex regexCloseDelimeter = std::regex(R"(\n\])");
             pushAssemblyInstance =
                 std::regex_replace(pushAssemblyInstance, cleanRegex, "M\n", std::regex_constants::format_first_only);
             std::regex memorySegmentRegex = std::regex(R"(\#\#m_s\#\#)");
@@ -116,10 +111,6 @@ string CodeWritter::newPushAssembly(string memorySegment, int memorySegmentIndex
             pushAssemblyInstance          = std::regex_replace(pushAssemblyInstance, memorySegmentRegex,
                                                                std::to_string(Utility::memorySegmentMap[memorySegment]));
         }
-        // std::regex memorySegmentIndexRegex = std::regex(R"(\#\#index\#\#)");
-        // pushAssemblyInstance =
-        //     std::regex_replace(pushAssemblyInstance, memorySegmentIndexRegex,
-        //                        std::to_string(memorySegmentIndex ));
     }
     return pushAssemblyInstance;
 }
