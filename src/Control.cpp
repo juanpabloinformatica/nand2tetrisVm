@@ -29,8 +29,13 @@ void Control::filepathHandler(string & filepath) {
     string writeFilePath;
     int    delimeterIndex;
     delimeterIndex = (isFile == true) ? filepath.find(".") : filepath.length() - 1;
-    writeFilePath = filepath.substr(0, delimeterIndex) + ".asm";
+    writeFilePath  = filepath.substr(0, delimeterIndex) + ".asm";
     this->setWriteFile(writeFilePath);
+    this->setBoostrapToWriteFile();
+
+    /*
+     *
+     */
 
     isFile == true ? fileHandler(filepath) : directoryHandler(filepath);
 }
@@ -202,7 +207,15 @@ void Control::setReadFile(string filepath) {
 }
 
 void Control::setWriteFile(string filepath) {
+    /*
+     * Initialised with boostrap code
+     * */
     this->writeFile = ofstream(filepath);
+}
+
+void Control::setBoostrapToWriteFile(void) {
+    cout << "Entering in boostrap" << endl;
+    this->getWriteFile() << this->codeWritter.getWriteInitAssembly() << endl;
 }
 
 ifstream & Control::getReadFile() {
