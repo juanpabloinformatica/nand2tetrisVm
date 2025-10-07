@@ -177,6 +177,11 @@ void Control::traverseFile() {
                     this->actualFunction = this->parser.getArg1();
                     break;
                 case C_RETURN:
+                    cout << currentCommand << endl;
+                    this->getWriteFile() << "//" << currentCommand << endl;
+                    cout << "________________" << endl;
+                    cout << this->parser.getArg1() << endl;
+                    this->getWriteFile() << this->codeWritter.getWriteReturnAssembly() << endl;
                     break;
                 case C_CALL:
                     cout << currentCommand << endl;
