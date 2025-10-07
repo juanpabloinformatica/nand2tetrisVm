@@ -14,6 +14,7 @@ CodeWritter::CodeWritter() {
     this->setWriteIfTemplate();
     this->setWriteCallTemplate();
     this->setWriteInitTemplate();
+    this->setWriteReturnTemplate();
 
     this->labelCounter         = 0;
     this->firstLabelCounter    = 0;
@@ -308,6 +309,11 @@ string CodeWritter::newWriteInitAssembly(void) {
     return writeInitInstance;
 }
 
+string CodeWritter::newWriteReturnAssembly(void) {
+    string writeReturnInstance = string(this->writeReturnTemplate);
+    return writeReturnInstance;
+}
+
 string CodeWritter::getTemplate(string filename) {
     std::filesystem::path cwd      = std::filesystem::current_path();
     std::filesystem::path filepath = cwd.string() + "/" + "templates" + "/" + filename;
@@ -362,6 +368,10 @@ string CodeWritter::getWriteInitAssembly(void) {
     return this->newWriteInitAssembly();
 }
 
+string CodeWritter::getWriteReturnAssembly(void) {
+    return this->newWriteReturnAssembly();
+}
+
 void CodeWritter::setPushAssemblyTemplate(void) {
     this->pushAssemblyTemplate = this->getTemplate("pushAssembly.txt");
 }
@@ -392,4 +402,8 @@ void CodeWritter::setWriteCallTemplate(void) {
 
 void CodeWritter ::setWriteInitTemplate(void) {
     this->writeInitTemplate = this->getTemplate("writeInit.txt");
+}
+
+void CodeWritter ::setWriteReturnTemplate(void) {
+    this->writeReturnTemplate = this->getTemplate("writeReturn.txt");
 }
