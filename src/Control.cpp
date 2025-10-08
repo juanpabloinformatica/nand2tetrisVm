@@ -174,7 +174,16 @@ void Control::traverseFile() {
                     break;
                 case C_FUNCTION:
                     //this will updated and gott the name from the function
+                    cout << currentCommand << endl;
+                    this->getWriteFile() << "//" << currentCommand << endl;
+                    cout << "________________" << endl;
+                    cout << this->parser.getArg1() << endl;
+
                     this->actualFunction = this->parser.getArg1();
+
+                    this->getWriteFile() << this->codeWritter.getWriteFunctionAssembly(
+                        this->parser.getArg1(), std::to_string(this->parser.getArg2()));
+
                     break;
                 case C_RETURN:
                     cout << currentCommand << endl;

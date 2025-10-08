@@ -1,0 +1,23 @@
+
+// Declare a label for the function entry
+// that functionName is codeWritterObj->parser->getArg1()
+(##functionName##)
+// k  number of local variables
+// Initialize all of them to 0
+// that k is codeWritterObj->parser->getArg2()
+@##nArgs##
+D=A
+@13
+M=D
+(FPUSH)
+@0
+A=M
+M=0
+@0
+M=M+1
+@13
+M=M-1
+D=M
+@FPUSH
+D;JGT
+

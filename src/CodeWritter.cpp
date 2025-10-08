@@ -15,6 +15,7 @@ CodeWritter::CodeWritter() {
     this->setWriteCallTemplate();
     this->setWriteInitTemplate();
     this->setWriteReturnTemplate();
+    this->setWriteFunctionTemplate();
 
     this->labelCounter         = 0;
     this->firstLabelCounter    = 0;
@@ -314,6 +315,16 @@ string CodeWritter::newWriteReturnAssembly(void) {
     return writeReturnInstance;
 }
 
+string CodeWritter::newWriteFunctionAssembly(string functionName, string nArgs) {
+    string     writeFunctionInstance = string(this->writeFunctionTemplate);
+    PatternMgr patternMgr            = PatternMgr();
+    patternMgr.addPattern(R"(\#\#nArgs\#\#)", nArgs);
+    patternMgr.addPattern(R"(\#\#functionName\#\#)", functionName);
+    writeFunctionInstance = this->transformTemplate(patternMgr, writeFunctionInstance, false);
+
+    return writeFunctionInstance;
+}
+
 string CodeWritter::getTemplate(string filename) {
     std::filesystem::path cwd      = std::filesystem::current_path();
     std::filesystem::path filepath = cwd.string() + "/" + "templates" + "/" + filename;
@@ -372,6 +383,10 @@ string CodeWritter::getWriteReturnAssembly(void) {
     return this->newWriteReturnAssembly();
 }
 
+string CodeWritter::getWriteFunctionAssembly(string functionName, string nArgs) {
+    return this->newWriteFunctionAssembly(functionName, nArgs);
+}
+
 void CodeWritter::setPushAssemblyTemplate(void) {
     this->pushAssemblyTemplate = this->getTemplate("pushAssembly.txt");
 }
@@ -406,4 +421,8 @@ void CodeWritter ::setWriteInitTemplate(void) {
 
 void CodeWritter ::setWriteReturnTemplate(void) {
     this->writeReturnTemplate = this->getTemplate("writeReturn.txt");
+}
+
+void CodeWritter ::setWriteFunctionTemplate(void) {
+    this->writeFunctionTemplate = this->getTemplate("writeFunction.txt");
 }
