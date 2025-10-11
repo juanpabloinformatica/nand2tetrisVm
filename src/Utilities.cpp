@@ -24,3 +24,10 @@ int Utility::fileExtensionDotIndex(const string & path) {
     }
     return (i < 0) ? -1 : i;
 }
+
+int Utility::getDirectoryNameIndex(const string & path) {
+    int i;
+    for (i = path.size() - 1; i >= 0 && path.at(i) != '/'; i--) {
+    }
+    return (i < 0) ? -1 : i;
+}

@@ -25,6 +25,7 @@ class Utility {
     static string           getFilepath(string file);
     static map<string, int> memorySegmentMap;
     static int              fileExtensionDotIndex(const string & path);
+    static int              getDirectoryNameIndex(const string& dirpath);
 };
 
 #endif
