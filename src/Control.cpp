@@ -17,6 +17,7 @@ void Control::start_control(string & filepath) {
     this->filepathHandler(filepath);
 }
 
+/*To improve instead of using string use the class name*/
 void Control::filepathHandler(string & filepath) {
     if (filepath.empty()) {
         return;
@@ -28,14 +29,19 @@ void Control::filepathHandler(string & filepath) {
     bool   isFile = is_regular_file(filepath) == true;
     string writeFilePath;
     int    delimeterIndex;
-    delimeterIndex = (isFile == true) ? filepath.find(".") : filepath.length() - 1;
-    writeFilePath  = filepath.substr(0, delimeterIndex) + ".asm";
+    delimeterIndex = filepath.find(".");
+
+    if (isFile) {
+        writeFilePath = filepath.substr(0, delimeterIndex) + ".asm";
+    } else {
+        int    directoryNameIndex = Utility::getDirectoryNameIndex(filepath);
+        string directoryName      = filepath.substr(directoryNameIndex, filepath.size() - 1);
+        writeFilePath             = filepath + directoryName + ".asm";
+        cout << directoryName << endl;
+        cout << writeFilePath << endl;
+    }
     this->setWriteFile(writeFilePath);
     this->setBoostrapToWriteFile();
-
-    /*
-     *
-     */
 
     isFile == true ? fileHandler(filepath) : directoryHandler(filepath);
 }
@@ -224,6 +230,8 @@ void Control::setWriteFile(string filepath) {
     /*
      * Initialised with boostrap code
      * */
+    cout << "IN SET WRITE FILE" <<endl;
+    cout << filepath <<endl;
     this->writeFile = ofstream(filepath);
 }
 
