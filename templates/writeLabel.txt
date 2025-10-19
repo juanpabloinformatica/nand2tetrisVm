@@ -1,2 +1,5 @@
 (##LABEL##)
 
+//ins, number of instructions
+//label, 1
+

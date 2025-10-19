@@ -21,3 +21,5 @@ D=M
 @FPUSH
 D;JGT
 
+//ins, number of instructions
+// function x k, 15

@@ -5,3 +5,6 @@ D=M
 @##LABEL##
 D;JGT
 
+//ins, number of instructions
+// if, 6
+

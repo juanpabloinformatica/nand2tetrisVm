@@ -4,7 +4,7 @@ D=A
 @0
 M=D
 //[1] push return_address
-@5
+@54
 D=A
 @0
 D=M
@@ -61,5 +61,7 @@ M=D
 @Sys.init
 0;JMP
 //[9]
-(5)
+(54)
 
+//ins, number of instructions
+//init, 53
