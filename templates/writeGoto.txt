@@ -1,3 +1,6 @@
 @##LABEL##
 0;JMP
 
+//ins, number of instructions
+//goto x, 2
+
