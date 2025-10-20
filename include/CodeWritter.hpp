@@ -8,6 +8,80 @@
 using std::ofstream;
 using std::string;
 using std::regex_constants::format_first_only;
+/*Bitmasking here should be better*/
+/*
+ *arithmetic
+ */
+
+const int nArAdd = 10;
+const int nArSub = 10;
+const int nArNeg = 6;
+const int nArEq  = 24;
+const int nArGt  = 24;
+const int nArLt  = 24;
+const int nArAnd = 10;
+const int nArOr  = 10;
+const int nArNot = 6;
+/*
+ *  pop
+ */
+
+const int nPopPointer  = 11;
+const int nPopStatic   = 11;
+const int nPopTemp     = 11;
+const int nPopThis     = 17;
+const int nPopThat     = 17;
+const int nPopLocal    = 17;
+const int nPopArgument = 17;
+
+/*
+ *  push
+ */
+
+const int n_push_constant = 7;
+const int n_push_pointer  = 9;
+const int n_push_static   = 9;
+const int n_push_temp     = 9;
+const int n_push_this     = 10;
+const int n_push_that     = 10;
+const int n_push_local    = 10;
+const int n_push_argument = 10;
+
+/*
+ *  call
+ */
+
+const int nCall = 50;
+
+/*
+ *  function
+ */
+const int nFunction = 15;
+
+/*
+ *  goto
+ */
+const int nGoto = 2;
+
+/*
+ *  if
+ */
+const int nIf = 2;
+
+/*
+ *  if
+ */
+const int nInit = 53;
+
+/*
+ *  label
+ */
+const int nLabel = 1;
+
+/*
+ *  return
+ */
+const int nReturn = 80;
 
 class CodeWritter {
   private:
@@ -34,6 +108,7 @@ class CodeWritter {
     int    labelCounter;
     int    firstLabelCounter;
     int    continueLabelCounter;
+    int    hackInstructionCounter;
     string _arithmeticAssemblyBinary(string arithmeticType, string arithmeticAssemblyInstance);
     string _arithmeticAssemblyBinaryNotBool(string arithmeticType, string arithmeticAssemblyInstance);
     string _arithmeticAssemblyBinaryBool(string arithmeticType, string arithmeticAssemblyInstance);
@@ -56,7 +131,7 @@ class CodeWritter {
 
     string newWriteInitAssembly(void);
     string newWriteReturnAssembly(void);
-    string newWriteFunctionAssembly(string functionName, string nArgs );
+    string newWriteFunctionAssembly(string functionName, string nArgs);
 
   public:
     CodeWritter();
@@ -79,7 +154,7 @@ class CodeWritter {
     string getWriteCallTemplate(int currentCommandLineNumber, string nArgs, string functionName);
     string getWriteInitAssembly(void);
     string getWriteReturnAssembly(void);
-    string getWriteFunctionAssembly(string functionName, string nArgs );
+    string getWriteFunctionAssembly(string functionName, string nArgs);
     string getTemplate(string filepath);
 };
 #endif
