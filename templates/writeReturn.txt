@@ -93,5 +93,3 @@ M=D
 A=M
 0;JMP
 
-//ins, number of instructions
-//return, 80

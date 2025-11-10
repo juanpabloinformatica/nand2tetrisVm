@@ -1,21 +1,22 @@
+
 [
 @##index##
 D=A
 ]
-//[
-//@##index##
-//D=A
-//@13
-//M=0
-//(LOOP##labelCounter##)
-//@13
-//M=M-1
-//D=D-1
-//@LOOP##labelCounter##
-//D;JGT
-//@13
-//D=M
-//]
+[
+@##index##
+D=A
+@13
+M=0
+(LOOP##labelCounter##)
+@13
+M=M-1
+D=D-1
+@LOOP##labelCounter##
+D;JGT
+@13
+D=M
+]
 [
 @##m_s##
 [
@@ -31,16 +32,4 @@ A=M
 M=D
 @0
 M=M+1
-
-//ins			number of lines
-
-//constant      7
-//pointer       9
-//static        9
-//temp          9
-//this          10
-//that          10
-//local         10
-//argument      10
-
 

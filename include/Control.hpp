@@ -12,8 +12,8 @@ using std::string;
 using std::filesystem::absolute;
 using std::filesystem::is_directory;
 using std::filesystem::is_regular_file;
-using std::filesystem::recursive_directory_iterator;
 using std::filesystem::path;
+using std::filesystem::recursive_directory_iterator;
 
 class Control {
   private:

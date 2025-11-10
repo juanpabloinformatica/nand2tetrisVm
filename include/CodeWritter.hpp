@@ -13,50 +13,36 @@ using std::regex_constants::format_first_only;
  *arithmetic
  */
 
-const int nArAdd = 10;
-const int nArSub = 10;
-const int nArNeg = 6;
-const int nArEq  = 24;
-const int nArGt  = 24;
-const int nArLt  = 24;
-const int nArAnd = 10;
-const int nArOr  = 10;
-const int nArNot = 6;
+const int nArNotBool = 10;
+const int nArUnary   = 6;
+const int nArBool    = 22;
 /*
  *  pop
  */
 
-const int nPopPointer  = 11;
-const int nPopStatic   = 11;
-const int nPopTemp     = 11;
-const int nPopThis     = 17;
-const int nPopThat     = 17;
-const int nPopLocal    = 17;
-const int nPopArgument = 17;
+const int nPopNotReferenceVar = 18;
+const int nPopReferenceVar    = 17;
 
 /*
  *  push
  */
 
-const int n_push_constant = 7;
-const int n_push_pointer  = 9;
-const int n_push_static   = 9;
-const int n_push_temp     = 9;
-const int n_push_this     = 10;
-const int n_push_that     = 10;
-const int n_push_local    = 10;
-const int n_push_argument = 10;
+const int nPushConstant        = 7;
+const int nPushNotReferenceVar = 9;
+const int nPushReferenceVar    = 10;
 
 /*
  *  call
  */
 
-const int nCall = 50;
+/*Here is 49 and not 50 because labels doesn't count*/
+const int nCall = 49;
 
 /*
  *  function
  */
-const int nFunction = 15;
+/*Here is 15 and not 16 because labels doesn't count*/
+const int nFunction = 16;
 
 /*
  *  goto
@@ -66,17 +52,18 @@ const int nGoto = 2;
 /*
  *  if
  */
-const int nIf = 2;
+const int nIf = 6;
 
 /*
- *  if
+ *  init
  */
 const int nInit = 53;
 
 /*
  *  label
  */
-const int nLabel = 1;
+/*Here is 0 and not 1 because labels doesn't count*/
+const int nLabel = 0;
 
 /*
  *  return
@@ -108,7 +95,7 @@ class CodeWritter {
     int    labelCounter;
     int    firstLabelCounter;
     int    continueLabelCounter;
-    int    hackInstructionCounter;
+    int    globalHackInstructionCounter;
     string _arithmeticAssemblyBinary(string arithmeticType, string arithmeticAssemblyInstance);
     string _arithmeticAssemblyBinaryNotBool(string arithmeticType, string arithmeticAssemblyInstance);
     string _arithmeticAssemblyBinaryBool(string arithmeticType, string arithmeticAssemblyInstance);
@@ -124,7 +111,7 @@ class CodeWritter {
     string newWriteGoto(string label);
     string newWriteIf(string label);
     // Adding function mechanism
-    string newWriteCall(int currentCommandLineNumber, string nArgs, string functionName);
+    string newWriteCall(string nArgs, string functionName);
     // string newWriteFunction();
     // string newWriteReturn();
     // string newWriteInit();
@@ -151,10 +138,13 @@ class CodeWritter {
     string getWriteLabelTemplate(string label);
     string getWriteGotoTemplate(string label);
     string getWriteIfTemplate(string label);
-    string getWriteCallTemplate(int currentCommandLineNumber, string nArgs, string functionName);
+    string getWriteCallTemplate(string nArgs, string functionName);
     string getWriteInitAssembly(void);
     string getWriteReturnAssembly(void);
     string getWriteFunctionAssembly(string functionName, string nArgs);
     string getTemplate(string filepath);
+    /*This will be removed*/
+    int    getGlobalHackInstructionCounter(void);
+    void   setGlobalHackInstructionCounter(int value);
 };
 #endif

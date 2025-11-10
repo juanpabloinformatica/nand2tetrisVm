@@ -217,3 +217,14 @@ M=D
     ASSERT_STREQ(resultPointerPopAssembly.c_str(), this->cw.getPopAssembly("pointer", 1, 13, 14).c_str());
 }
 
+TEST_F(TestCodeWritter, HandleGetArithmeticAssemblyInstructions) {
+    cout << this->cw.getArithmeticAssembly("add") << endl;
+    ASSERT_EQ(this->cw.getHackInstructionCounter(), nArNotBool);
+
+    cout << this->cw.getArithmeticAssembly("gt") << endl;
+    ASSERT_EQ(this->cw.getHackInstructionCounter(), nArNotBool + nArBool);
+
+    cout << this->cw.getArithmeticAssembly("not") << endl;
+    ASSERT_EQ(this->cw.getHackInstructionCounter(), nArNotBool + nArBool + nArUnary);
+    cout << "Value of instructions:\t" << this->cw.getHackInstructionCounter() << endl;
+}

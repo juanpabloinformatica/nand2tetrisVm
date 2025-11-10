@@ -23,15 +23,3 @@ D=M
 A=M
 M=D
 
-
-//ins			number of lines
-
-//pointer		11
-//static		11
-//temp			11
-//this          17
-//that          17
-//local         17
-//argument      17
-//
-//

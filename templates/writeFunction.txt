@@ -8,8 +8,10 @@
 @##nArgs##
 D=A
 @13
+@SKIP##functionName##
+D;JEQ
 M=D
-(FPUSH)
+(FPUSH##functionName##)
 @0
 A=M
 M=0
@@ -18,8 +20,7 @@ M=M+1
 @13
 M=M-1
 D=M
-@FPUSH
+@FPUSH##functionName##
 D;JGT
+(SKIP##functionName##)
 
-//ins, number of instructions
-// function x k, 15
