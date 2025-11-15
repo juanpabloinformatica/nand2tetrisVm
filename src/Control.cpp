@@ -11,6 +11,7 @@ Control::Control(string filepath) {
     this->currentCommandLineNumber = 0;
     this->functionReturnCounter    = 0;
     this->actualFunction           = "";
+    this->writeFileName            = "sys";
 }
 
 void Control::start_control(string & filepath) {
@@ -41,10 +42,16 @@ void Control::filepathHandler(string & filepath) {
         cout << directoryName << endl;
         cout << writeFilePath << endl;
     }
+
+    // this->setWriteFileName(writeFilePath);
     this->setWriteFile(writeFilePath);
     this->setBoostrapToWriteFile();
 
     isFile == true ? fileHandler(filepath) : directoryHandler(filepath);
+}
+
+string & Control::getWriteFileName() {
+    return this->writeFileName;
 }
 
 void Control::fileHandler(const string & filepath) {
@@ -54,6 +61,9 @@ void Control::fileHandler(const string & filepath) {
 
     cout << filepath << endl;
 
+    int end   = filepath.find(".");
+    int start = filepath.find_last_of("/");
+    this->setWriteFileName(filepath.substr(start + 1, end - start - 1));
     this->setReadFile(filepath);
     traverseFile();
 }
@@ -93,7 +103,8 @@ void Control::traverseFile() {
                         << "// Setting to 0 last 2 values and then pointing to "
                            "the n-1 "
                            "value for putting the result in there\n"
-                        << endl<< "//" << currentCommand << endl;
+                        << endl
+                        << "//" << currentCommand << endl;
                     this->getWriteFile()
                         << this->codeWritter.getArithmeticAssembly(
                                this->parser.getArg1());
@@ -135,17 +146,20 @@ void Control::traverseFile() {
                         exit(0);
                     }
                     this->memoryManager.updateStackMemory(valueToPush);
-                    this->getWriteFile() << endl<< "//" << currentCommand << endl;
-                    this->getWriteFile() << this->codeWritter.getPushAssembly(
-                                                this->parser.getArg1(),
-                                                this->parser.getArg2(), 13)
-                                         << endl;
+                    this->getWriteFile() << endl
+                                         << "//" << currentCommand << endl;
+                    this->getWriteFile()
+                        << this->codeWritter.getPushAssembly(
+                               this->writeFileName, this->parser.getArg1(),
+                               this->parser.getArg2(), 13)
+                        << endl;
                     std::cout << "Pushing Once" << std::endl;
                     this->memoryManager.showStack();
                     break;
                 case C_POP:
                     cout << currentCommand << endl;
-                    this->getWriteFile() << endl<< "//" << currentCommand << endl;
+                    this->getWriteFile() << endl
+                                         << "//" << currentCommand << endl;
                     resultPop = this->memoryManager.popStack();
                     if (this->parser.getArg1() == "local") {
                         this->memoryManager.updateMSLocal(
@@ -172,16 +186,18 @@ void Control::traverseFile() {
                         std::cout << ".vm file incorrect" << std::endl;
                         exit(0);
                     }
-                    this->getWriteFile() << this->codeWritter.getPopAssembly(
-                                                this->parser.getArg1(),
-                                                this->parser.getArg2(), 13, 14)
-                                         << endl;
+                    this->getWriteFile()
+                        << this->codeWritter.getPopAssembly(
+                               this->writeFileName, this->parser.getArg1(),
+                               this->parser.getArg2(), 13, 14)
+                        << endl;
 
                     this->memoryManager.showStack();
                     break;
                 case C_LABEL:
                     cout << currentCommand << endl;
-                    this->getWriteFile() << endl<< "//" << currentCommand << endl;
+                    this->getWriteFile() << endl
+                                         << "//" << currentCommand << endl;
                     cout << "________________" << endl;
                     cout << this->parser.getArg1() << endl;
                     this->getWriteFile()
@@ -193,7 +209,8 @@ void Control::traverseFile() {
                 case C_GOTO:
                     /*To check*/
                     cout << currentCommand << endl;
-                    this->getWriteFile() << endl<< "//" << currentCommand << endl;
+                    this->getWriteFile() << endl
+                                         << "//" << currentCommand << endl;
                     cout << "________________" << endl;
                     cout << this->parser.getArg1() << endl;
                     this->getWriteFile()
@@ -204,7 +221,8 @@ void Control::traverseFile() {
                     break;
                 case C_IF:
                     cout << currentCommand << endl;
-                    this->getWriteFile() << endl<< "//" << currentCommand << endl;
+                    this->getWriteFile() << endl
+                                         << "//" << currentCommand << endl;
                     cout << "________________" << endl;
                     this->memoryManager.popStack();
                     cout << this->parser.getArg1() << endl;
@@ -217,10 +235,10 @@ void Control::traverseFile() {
                 case C_FUNCTION:
                     //this will updated and gott the name from the function
                     cout << currentCommand << endl;
-                    this->getWriteFile() << endl<< "//" << currentCommand << endl;
+                    this->getWriteFile() << endl
+                                         << "//" << currentCommand << endl;
                     cout << "________________" << endl;
                     cout << this->parser.getArg1() << endl;
-
 
                     this->getWriteFile()
                         << this->codeWritter.getWriteFunctionAssembly(
@@ -230,7 +248,8 @@ void Control::traverseFile() {
                     break;
                 case C_RETURN:
                     cout << currentCommand << endl;
-                    this->getWriteFile() << endl<< "//" << currentCommand << endl;
+                    this->getWriteFile() << endl
+                                         << "//" << currentCommand << endl;
                     cout << "________________" << endl;
                     cout << this->parser.getArg1() << endl;
                     this->getWriteFile()
@@ -238,8 +257,16 @@ void Control::traverseFile() {
                     break;
                 case C_CALL:
                     this->actualFunction = this->parser.getArg1();
+                    // this->setWriteFileName(this->parser.getArg1().substr(
+                    //     0, parser.getArg1().find(".")));
+                    cout << "delimeter" << endl;
+                    cout << "IN CALL COMMAND\n"
+                         << currentCommand << "\nFilename:\t"
+                         << this->writeFileName << endl;
+                    cout << "delimeter" << endl;
                     cout << currentCommand << endl;
-                    this->getWriteFile() << endl<< "//" << currentCommand << endl;
+                    this->getWriteFile() << endl
+                                         << "//" << currentCommand << endl;
                     cout << "________________" << endl;
                     cout << this->parser.getArg1() << endl;
                     this->getWriteFile()
@@ -291,6 +318,24 @@ void Control::setWriteFile(string filepath) {
 void Control::setBoostrapToWriteFile(void) {
     cout << "Entering in boostrap" << endl;
     this->getWriteFile() << this->codeWritter.getWriteInitAssembly() << endl;
+}
+
+void Control::setWriteFileName(string filepath) {
+    // int indexSeparator     = filePath.size() - 1;
+    // int indexFileExtension = filePath.size() - 1;
+    // for (; indexSeparator > 0 && filePath.at(indexSeparator) != '/';
+    //      indexSeparator--)
+    //     ;
+    // for (; indexFileExtension > 0 && filePath.at(indexFileExtension) != '.';
+    //      indexFileExtension--)
+    //     ;
+    // this->writeFileName =
+    //     (indexFileExtension > 0 && indexSeparator > 0) ?
+    //         filePath.substr(indexSeparator + 1,
+    //                         indexFileExtension - indexSeparator - 1) :
+    //         NULL;
+    // cout << "FILE NAME:\t" << this->writeFileName << endl;
+    this->writeFileName = filepath;
 }
 
 ifstream & Control::getReadFile() {

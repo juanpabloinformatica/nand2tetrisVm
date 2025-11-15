@@ -29,9 +29,10 @@ void CodeWritter::PatternMgr::addPattern(std::string pattern,
     this->patternInsertionTrack.push_back(pattern);
 }
 
-string CodeWritter::newPushAssembly(string memorySegment,
-                                    int    memorySegmentIndex,
-                                    int    var1) {
+string CodeWritter::newPushAssembly(string & filename,
+                                    string   memorySegment,
+                                    int      memorySegmentIndex,
+                                    int      var1) {
     string pushAssemblyInstance = std::string(this->pushAssemblyTemplate);
     if (memorySegmentIndex >= 0) {
         std::regex regexOpenDelimeter = std::regex(R"(\[\n)");
@@ -121,10 +122,19 @@ string CodeWritter::newPushAssembly(string memorySegment,
                 std::regex_replace(pushAssemblyInstance, cleanRegex, "M\n",
                                    std::regex_constants::format_first_only);
             std::regex memorySegmentRegex = std::regex(R"(\#\#m_s\#\#)");
-            pushAssemblyInstance          = std::regex_replace(
-                pushAssemblyInstance, memorySegmentRegex,
-                std::to_string(Utility::memorySegmentMap[memorySegment] +
-                                        memorySegmentIndex));
+            if (memorySegment != "static") {
+                pushAssemblyInstance = std::regex_replace(
+                    pushAssemblyInstance, memorySegmentRegex,
+                    std::to_string(Utility::memorySegmentMap[memorySegment] +
+                                   memorySegmentIndex));
+            } else {
+                pushAssemblyInstance = std::regex_replace(
+                    pushAssemblyInstance, memorySegmentRegex,
+                    filename + "." + std::to_string(memorySegmentIndex));
+                std::cout << "delimeter" << std::endl;
+                std::cout << pushAssemblyInstance << std::endl;
+                std::cout << "delimeter" << std::endl;
+            }
             this->globalHackInstructionCounter += nPushNotReferenceVar;
         } else {
             std::cout << "IN NOT :  POINTER | TEMP | STATIC " << std::endl;
@@ -151,17 +161,25 @@ string CodeWritter::newPushAssembly(string memorySegment,
     return pushAssemblyInstance;
 }
 
-string CodeWritter ::newPopAssembly(string memorySegment,
-                                    int    memorySegmentIndex,
-                                    int    var1,
-                                    int    var2) {
+string CodeWritter ::newPopAssembly(string & filename,
+                                    string   memorySegment,
+                                    int      memorySegmentIndex,
+                                    int      var1,
+                                    int      var2) {
     string     popAssemblyInstance = string(this->popAssemblyTemplate);
     PatternMgr patternMgr          = PatternMgr();
-    patternMgr.addPattern(
-        R"(\#\#arg1\#\#)",
-        std::to_string(Utility::memorySegmentMap[memorySegment]));
-    patternMgr.addPattern(R"(\#\#arg2\#\#)",
-                          std::to_string(memorySegmentIndex));
+    (memorySegment != "static") ?
+                 patternMgr.addPattern(
+            R"(\#\#arg1\#\#)",
+            std::to_string(Utility::memorySegmentMap[memorySegment])) :
+                 patternMgr.addPattern(R"(\#\#arg1\#\#)", std::to_string(0));
+    (memorySegment != "static") ?
+        patternMgr.addPattern(R"(\#\#arg2\#\#)",
+                              std::to_string(memorySegmentIndex)) :
+        patternMgr.addPattern(
+            R"(\#\#arg2\#\#)",
+            filename + "." + std::to_string(memorySegmentIndex));
+
     patternMgr.addPattern(R"(\#\#var1\#\#)", std::to_string(var1));
     patternMgr.addPattern(R"(\#\#var2\#\#)", std::to_string(var2));
     popAssemblyInstance =
@@ -174,6 +192,11 @@ string CodeWritter ::newPopAssembly(string memorySegment,
         popAssemblyInstance =
             this->transformTemplate(patternMgr, popAssemblyInstance, true);
         this->globalHackInstructionCounter += nPopNotReferenceVar;
+        if (memorySegment == "static") {
+            std::cout << "delimeter" << std::endl;
+            std::cout << popAssemblyInstance << std::endl;
+            std::cout << "delimeter" << std::endl;
+        }
         return popAssemblyInstance;
     }
     patternMgr.addPattern(R"(\n\[\nA=D\+A\nD=A\n\])", "");
@@ -182,6 +205,9 @@ string CodeWritter ::newPopAssembly(string memorySegment,
     popAssemblyInstance =
         this->transformTemplate(patternMgr, popAssemblyInstance, true);
     this->globalHackInstructionCounter += nPopReferenceVar;
+    std::cout << "delimeter" << std::endl;
+    std::cout << popAssemblyInstance << std::endl;
+    std::cout << "delimeter" << std::endl;
     return popAssemblyInstance;
 }
 
@@ -380,7 +406,7 @@ string CodeWritter::newWriteCall(string nArgs, string functionName) {
     PatternMgr patternMgr        = PatternMgr();
     patternMgr.addPattern(
         R"(\#\#currentHackCommandLineNumberPlusOne\#\#)",
-        std::to_string(this->globalHackInstructionCounter + nCall ));
+        std::to_string(this->globalHackInstructionCounter + nCall));
     patternMgr.addPattern(R"(\#\#nArgs\#\#)", nArgs);
     patternMgr.addPattern(R"(\#\#functionName\#\#)", functionName);
     writeCallInstance =
@@ -438,15 +464,19 @@ string CodeWritter::getTemplate(string filename) {
     return result;
 }
 
-string CodeWritter::getPushAssembly(string segment, int index, int var1) {
-    return newPushAssembly(segment, index, var1);
+string CodeWritter::getPushAssembly(string & filename,
+                                    string   segment,
+                                    int      index,
+                                    int      var1) {
+    return newPushAssembly(filename, segment, index, var1);
 }
 
-string CodeWritter::getPopAssembly(string memorySegmentIndex,
-                                   int    index,
-                                   int    var1,
-                                   int    var2) {
-    return newPopAssembly(memorySegmentIndex, index, var1, var2);
+string CodeWritter::getPopAssembly(string & filename,
+                                   string   memorySegmentIndex,
+                                   int      index,
+                                   int      var1,
+                                   int      var2) {
+    return newPopAssembly(filename, memorySegmentIndex, index, var1, var2);
 }
 
 string CodeWritter::getArithmeticAssembly(string arithmeticType) {

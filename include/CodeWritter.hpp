@@ -21,6 +21,7 @@ const int nArBool    = 22;
  */
 
 const int nPopNotReferenceVar = 18;
+const int nPopStatic = 15;
 const int nPopReferenceVar    = 17;
 
 /*
@@ -76,7 +77,7 @@ class CodeWritter {
       public:
         std::map<std::string, std::string> patternMap;
         std::vector<std::string>           patternInsertionTrack;
-        void                               addPattern(std::string pattern, std::string replacement);
+        void addPattern(std::string pattern, std::string replacement);
         // string getTransformedTemplate(std::string assemblyTemplate, bool firstOnly);
     };
 
@@ -96,15 +97,28 @@ class CodeWritter {
     int    firstLabelCounter;
     int    continueLabelCounter;
     int    globalHackInstructionCounter;
-    string _arithmeticAssemblyBinary(string arithmeticType, string arithmeticAssemblyInstance);
-    string _arithmeticAssemblyBinaryNotBool(string arithmeticType, string arithmeticAssemblyInstance);
-    string _arithmeticAssemblyBinaryBool(string arithmeticType, string arithmeticAssemblyInstance);
-    string _arithmeticAssemblyUnary(string arithmeticType, string arithmeticAssemblyInstance);
+    string _arithmeticAssemblyBinary(string arithmeticType,
+                                     string arithmeticAssemblyInstance);
+    string _arithmeticAssemblyBinaryNotBool(string arithmeticType,
+                                            string arithmeticAssemblyInstance);
+    string _arithmeticAssemblyBinaryBool(string arithmeticType,
+                                         string arithmeticAssemblyInstance);
+    string _arithmeticAssemblyUnary(string arithmeticType,
+                                    string arithmeticAssemblyInstance);
 
-    string newPushAssembly(string mememorySegment, int memorySegmentIndex, int var1);
-    string newPopAssembly(string mememorySegment, int memorySegmentIndex, int var1, int var2);
+    string newPushAssembly(string & filename,
+                           string   mememorySegment,
+                           int      memorySegmentIndex,
+                           int      var1);
+    string newPopAssembly(string & filename,
+                          string   mememorySegment,
+                          int      memorySegmentIndex,
+                          int      var1,
+                          int      var2);
     string newArithmeticAssembly(string arithmeticType);
-    string transformTemplate(PatternMgr & patternMgr, string assemblyTemplate, bool firstOnly);
+    string transformTemplate(PatternMgr & patternMgr,
+                             string       assemblyTemplate,
+                             bool         firstOnly);
 
     // Adding branching
     string newWriteLabel(string label);
@@ -132,8 +146,15 @@ class CodeWritter {
     void   setWriteInitTemplate(void);
     void   setWriteReturnTemplate(void);
     void   setWriteFunctionTemplate(void);
-    string getPushAssembly(string segment, int index, int var1);
-    string getPopAssembly(string segment, int index, int var1, int var2);
+    string getPushAssembly(string & filename,
+                           string   segment,
+                           int      index,
+                           int      var1);
+    string getPopAssembly(string & filename,
+                          string   segment,
+                          int      index,
+                          int      var1,
+                          int      var2);
     string getArithmeticAssembly(string arithmeticType);
     string getWriteLabelTemplate(string label);
     string getWriteGotoTemplate(string label);

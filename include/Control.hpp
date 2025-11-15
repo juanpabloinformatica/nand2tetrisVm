@@ -5,6 +5,7 @@
 #include "Parser.hpp"
 
 #include <fstream>
+#include <string>
 using std::fstream;
 using std::ifstream;
 using std::ofstream;
@@ -19,6 +20,7 @@ class Control {
   private:
     ifstream      readFile;
     ofstream      writeFile;
+    string        writeFileName;
     Parser        parser;
     CodeWritter   codeWritter;
     MemoryManager memoryManager;
@@ -36,9 +38,11 @@ class Control {
     ~Control();
     void       start_control(string & filepath);
     void       setReadFile(string filepath);
+    void       setWriteFileName(string writeFileName);
     ifstream & getReadFile();
     void       setWriteFile(string filepath);
     ofstream & getWriteFile();
+    string &   getWriteFileName();
     void       traverseFile(void);
     void       setIsFile(void);
     void       traverseHandler(void);
